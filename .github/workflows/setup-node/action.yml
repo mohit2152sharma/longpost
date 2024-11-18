@@ -1,5 +1,9 @@
 name: setup-node
 description: "Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧"
+inputs:
+  working-directory:
+    description: "Working directory"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -19,3 +23,4 @@ runs:
       shell: bash
       if: steps.cache_dependencies.outputs.cache-hit != 'true'
       run: npm ci
+      working-directory: ${{ inputs.working-directory }}

@@ -24,6 +24,8 @@ jobs:
 
       - name: Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧
         uses: ./.github/workflows/setup-node
+        with:
+          working-directory: longpost
 
       - name: Setup Pages ⚙️
         uses: actions/configure-pages@v4
@@ -32,11 +34,12 @@ jobs:
 
       - name: Build with Next.js 🏗️
         run: npx next build
+        working-directory: longpost
 
       - name: Upload artifact 📡
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out
+          path: .longpost/out
 
   deploy:
     environment:
