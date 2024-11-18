@@ -16,6 +16,9 @@ runs:
       with:
         node-version: 20
 
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+
     - name: Cache dependencies ⚡
       id: cache_dependencies
       uses: actions/cache@v3
