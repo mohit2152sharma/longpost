@@ -1,16 +1,20 @@
 import type { NextConfig } from "next";
-import path from "path";
 
-export const isLocal = process.env.NODE_ENV === 'production'
-const basePath = isLocal ? '/bsky-projects' : path.join(process.env.HOME as string, 'github', 'bsky-projects', 'longpost', 'out')
+export const isProd = process.env.NODE_ENV === 'production'
+const images = { unoptimized: true }
+let nextConfig: NextConfig
 
-const nextConfig: NextConfig = {
-  output: 'export',  // Enable static HTML export
-  images: {
-    unoptimized: true, // Required for static export
-  },
-  basePath: basePath, // Replace with your GitHub repo name
-  assetPrefix: basePath + '/'
+if (isProd) {
+  nextConfig = {
+    output: 'export',
+    images: images,
+    basePath: '/bsky-projects',
+    assetPrefix: '/bsky-projects/'
+  }
+} else {
+  nextConfig = {
+    output: 'standalone',
+  }
 }
 
 module.exports = nextConfig
