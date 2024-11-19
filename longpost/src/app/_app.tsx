@@ -1,9 +1,9 @@
-import { AppProps } from 'next/app';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { checkAuthStatus } from '~/lib/utils/auth';
+import { AppProps } from "next/app";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { checkAuthStatus } from "~/lib/auth";
 
-const publicPaths = ['/login'];
+const publicPaths = ["/login"];
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       const isPublicPath = publicPaths.includes(url);
 
       if (!isAuthenticated && !isPublicPath) {
-        router.push('/login');
+        router.push("/login");
       }
     };
 
@@ -23,9 +23,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     handleRouteChange(router.pathname);
 
     // Listen for route changes
-    router.events.on('routeChangeStart', handleRouteChange);
+    router.events.on("routeChangeStart", handleRouteChange);
     return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
+      router.events.off("routeChangeStart", handleRouteChange);
     };
   }, [router]);
 

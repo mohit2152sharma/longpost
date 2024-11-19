@@ -1,9 +1,9 @@
-"use client";
-import type { NextPage } from 'next';
-import LoginForm from '~/lib/components/LoginForm';
+import { LoginForm } from "~/components/login-form"
 
-const LoginPage: NextPage = () => {
-  return <LoginForm />;
-};
-
-export default LoginPage;
+export default function Page() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center px-4">
+      <LoginForm />
+    </div>
+  )
+}
