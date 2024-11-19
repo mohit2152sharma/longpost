@@ -1,46 +1,47 @@
-"use client"
-import Link from "next/link"
-import { useState } from "react"
-import { FormEvent } from "react"
-import { LoginCredentials } from "~/lib/types/auth"
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { FormEvent } from "react";
+import { LoginCredentials } from "~/lib/types/auth";
 
-import { Button } from "~/components/ui/button"
+import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "~/components/ui/card"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-import { bskyLogin } from "~/lib/utils/auth"
-import { LoadingSpinner } from "./ui/spinner"
-import { useRouter } from "next/navigation"
+} from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { bskyLogin } from "~/lib/auth";
+import { LoadingSpinner } from "./ui/spinner";
+import { useRouter } from "next/navigation";
 
 export function LoginForm() {
-
-  const [credentials, setCredentials] = useState<LoginCredentials>({ identifier: '', password: '' })
-  const [error, setError] = useState<boolean>(false)
-  const [isLoading, setLoading] = useState<boolean>(false)
-  const router = useRouter()
+  const [credentials, setCredentials] = useState<LoginCredentials>({
+    identifier: "",
+    password: "",
+  });
+  const [error, setError] = useState<boolean>(false);
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
 
-    const login = await bskyLogin({ credentials })
+    const login = await bskyLogin({ credentials });
     if (!login) {
-      setError(true)
-      setLoading(false)
-      console.error('Unable to login, invalid credentials')
+      setError(true);
+      setLoading(false);
+      console.error("Unable to login, invalid credentials");
     } else {
-      setLoading(false)
-      console.log('Login success')
-      router.push("/")
+      setLoading(false);
+      console.log("Login success");
+      router.push("/");
     }
-
-  }
+  };
 
   return (
     <Card className="mx-auto max-w-sm">
@@ -62,7 +63,12 @@ export function LoginForm() {
                 placeholder="username.bsky.social"
                 required
                 value={credentials.identifier}
-                onChange={(e) => setCredentials(prev => ({ ...prev, identifier: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    identifier: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -72,12 +78,23 @@ export function LoginForm() {
                 type="password"
                 name="password"
                 value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
+                onChange={(e) =>
+                  setCredentials((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }))
+                }
                 required
               />
             </div>
             <Button type="submit" className="w-full">
-              {isLoading ? <LoadingSpinner></LoadingSpinner> : error ? 'Incorrect Credentials' : 'Login' }
+              {isLoading ? (
+                <LoadingSpinner></LoadingSpinner>
+              ) : error ? (
+                "Incorrect Credentials"
+              ) : (
+                "Login"
+              )}
             </Button>
           </div>
 
@@ -89,6 +106,6 @@ export function LoginForm() {
           </div>
         </form>
       </CardContent>
-    </Card >
-  )
+    </Card>
+  );
 }

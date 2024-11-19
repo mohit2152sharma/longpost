@@ -1,24 +1,22 @@
-"use client"
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { checkAuthStatus, removeAuthToken } from '~/lib/utils/auth';
-import { default as Editor } from '~/components/editor/editor';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-// import { toast } from "@/components/hooks/use-toast"
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { checkAuthStatus, removeAuthToken } from "~/lib/auth";
+import { default as Editor } from "~/components/editor/editor";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
-} from "~/components/ui/form"
-import { Content, contentSchema } from '~/lib/types/editor';
-import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
-
+} from "~/components/ui/form";
+import { Content, contentSchema } from "~/components/editor/editor-types";
+import LoadingBtn from "~/components/loading-button";
+import { bskyThreads } from "~/lib/post";
+import { toast } from "sonner";
+import { Toaster } from "sonner";
 
 export default function Home() {
   const router = useRouter();
@@ -26,15 +24,15 @@ export default function Home() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      console.error('Not authenticated please login first')
-      router.push('/login');
+      console.error("Not authenticated please login first");
+      router.push("/login");
     }
   }, [isAuthenticated, router]);
 
   const handleLogout = () => {
     removeAuthToken();
-    console.log('Logged out successfuly')
-    router.push('/login');
+    console.log("Logged out successfuly");
+    router.push("/login");
   };
 
   const form = useForm<Content>({
@@ -47,7 +45,6 @@ export default function Home() {
     control,
     formState: { isSubmitting },
   } = form;
-  console.log(form)
 
   async function onSubmit(values: Content) {
     const formData = new FormData();
@@ -57,14 +54,23 @@ export default function Home() {
         formData.append(key, value);
       }
     });
-    console.log(formData)
 
-    try {
-      // console.log(values)
-      const values = contentSchema.parse(Object.fromEntries(formData.entries()))
-      // await editPost(formData);
-    } catch (error) {
-      console.log(error)
+    const parsedValues = contentSchema.parse(
+      Object.fromEntries(formData.entries()),
+    );
+
+    const sessionData = JSON.parse(
+      sessionStorage.getItem("sessionData") as string,
+    );
+    const response = await bskyThreads(
+      "https://bsky.social",
+      sessionData,
+      parsedValues.content,
+    );
+    if (!response.success) {
+      toast.error(response.message);
+    } else {
+      toast.success("Post created successfully");
     }
   }
 
@@ -72,7 +78,7 @@ export default function Home() {
     <div className="min-h-screen p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Welcome to Dashboard</h1>
+          <h1 className="text-3xl font-bold p-2">Longpost</h1>
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -80,7 +86,11 @@ export default function Home() {
             Logout
           </button>
         </div>
-        {/* <Editor>{content}</Editor> */}
+        <p className="text-lg p-2">
+          Convert your long posts into threads. Paste in your text, it can be
+          greater than bluesky&apos;s character limit (300), the site will split
+          the text into a series of post and then post them on bluesky.
+        </p>
         <Form {...form}>
           <form
             className="space-y-6 p-2"
@@ -92,19 +102,21 @@ export default function Home() {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Enter your post</FormLabel>
                   <FormControl>
-                    <Editor
-                      onChange={field.onChange}
-                    />
+                    <Editor onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <LoadingBtn type="submit" loading={isSubmitting}>
+              Submit
+            </LoadingBtn>
           </form>
         </Form>
+      </div>
+      <div>
+        <Toaster position="top-right" richColors />
       </div>
     </div>
   );

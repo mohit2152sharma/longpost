@@ -5,7 +5,6 @@ export interface LoginCredentials {
 
 export interface AuthResponse {
   token: string;
-  // Add other response fields from xyz.com API
 }
 
 export interface User {
