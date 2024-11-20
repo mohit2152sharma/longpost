@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import Image from "next/image";
 import { GithubIcon } from "lucide-react";
+import BskyLogo from "./bsky-logo";
 
 const Footer = () => {
   return (
@@ -12,12 +12,7 @@ const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Image
-            src="/bluesky_media_kit_logo.svg"
-            alt="BlueSky Logo"
-            width={30}
-            height={30}
-          />
+        <BskyLogo width={30} height={30} />
         </a>
       </div>
       <div className="flex items-center px-4 py-0">

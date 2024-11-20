@@ -1,20 +1,20 @@
 import type { NextConfig } from "next";
 
-export const isProd = process.env.NODE_ENV === 'production'
-const images = { unoptimized: true }
-let nextConfig: NextConfig
+export const isProd = process.env.NODE_ENV === "production";
+const images = { unoptimized: true };
+let nextConfig: NextConfig;
 
 if (isProd) {
   nextConfig = {
-    output: 'export',
+    output: "export",
     images: images,
-    basePath: '/bsky-projects',
-    assetPrefix: '/bsky-projects/'
-  }
+    basePath: "/bsky-projects",
+    assetPrefix: "/bsky-projects/",
+  };
 } else {
   nextConfig = {
-    output: 'standalone',
-  }
+    output: "standalone",
+  };
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
