@@ -22,7 +22,7 @@ describe("Test post functions", () => {
       expected: { error: false, message: "", texts: ["hello", "world"] },
     },
     {
-      text: "hello world world world world world world",
+      text: "hello     world world world world world world",
       characterLimit: 10,
       expected: {
         error: false,
@@ -31,7 +31,7 @@ describe("Test post functions", () => {
       },
     },
     {
-      text: "hello world world",
+      text: "hello    world \n\n\nworld",
       characterLimit: 11,
       expected: {
         error: false,

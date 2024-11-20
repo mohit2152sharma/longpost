@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { checkAuthStatus, removeAuthToken } from "~/lib/auth";
-import { default as Editor } from "~/components/editor/editor";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -17,6 +16,7 @@ import LoadingBtn from "~/components/loading-button";
 import { bskyThreads } from "~/lib/post";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
+import { Textarea } from "~/components/ui/textarea";
 
 export default function Home() {
   const router = useRouter();
@@ -59,6 +59,7 @@ export default function Home() {
       Object.fromEntries(formData.entries()),
     );
 
+    console.log(parsedValues);
     const sessionData = JSON.parse(
       sessionStorage.getItem("sessionData") as string,
     );
@@ -75,10 +76,10 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="h-full p-8">
+      <div className="max-w-4xl mx-auto h-full">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold p-2">Longpost</h1>
+          <h1 className="text-5xl font-bold p-2 self-center">Longpost</h1>
           <button
             onClick={handleLogout}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
@@ -86,14 +87,22 @@ export default function Home() {
             Logout
           </button>
         </div>
-        <p className="text-lg p-2">
-          Convert your long posts into threads. Paste in your text, it can be
-          greater than bluesky&apos;s character limit (300), the site will split
-          the text into a series of post and then post them on bluesky.
+        <p className="text-lg font-bold p-2">
+          Convert your long posts into threads.
         </p>
+        <div className="p-2 space-y-0">
+          <p>
+            Paste in your text, it can be greater than bluesky&apos;s character
+            limit (300).
+          </p>{" "}
+          <p>
+            The site will split the text into a series of post and then post
+            them on bluesky.
+          </p>
+        </div>
         <Form {...form}>
           <form
-            className="space-y-6 p-2"
+            className="space-y-6 p-2 h-1/4"
             noValidate
             onSubmit={handleSubmit(onSubmit)}
           >
@@ -101,9 +110,11 @@ export default function Home() {
               control={control}
               name="content"
               render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Editor onChange={field.onChange} />
+                <FormItem className="h-full">
+                  <FormControl className="border border-pink">
+                    <Textarea className="h-full" {...field} />
+                    {/* NOTE: Not using rich editor now as bsky doesn't have support for bold/italics formatting */}
+                    {/* <Editor onChange={field.onChange} /> */}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
