@@ -58,7 +58,7 @@ function createThread(
   buffer: number = 5,
 ): { texts?: Array<string>; error: boolean; message: string } {
   const words = text
-    .split(" ")
+    .split(/\s+/)
     .map((w) => w.trim())
     .filter((w) => w.length > 0);
   let postTexts: Array<string> = [""];
