@@ -8,6 +8,11 @@ interface BskyPost {
   reply?: BskyReply;
 }
 
+interface ParsedValues {
+  content: string;
+  shoutout: boolean;
+}
+
 interface BskyPostResponse {
   uri: string;
   cid: string;
@@ -45,4 +50,5 @@ export type {
   SessionData,
   CreateRecordRequest,
   BskyReply,
+  ParsedValues,
 };

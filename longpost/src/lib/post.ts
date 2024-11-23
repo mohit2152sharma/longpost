@@ -4,6 +4,7 @@ import {
   CreateRecordRequest,
   BskyPostResponse,
   BskyReply,
+  ParsedValues,
 } from "~/lib/types/post";
 import { BskyAgent, RichText } from "@atproto/api";
 
@@ -54,6 +55,7 @@ async function createBskyPost(
 
 function createThread(
   text: string,
+  shoutout: boolean,
   characterLimit: number = CHARACTER_LIMIT,
   buffer: number = 5,
 ): { texts?: Array<string>; error: boolean; message: string } {
@@ -79,13 +81,20 @@ function createThread(
   }
   postTexts = postTexts.filter((w) => w.length > 0);
   const texts: Array<string> = [];
+  const threadLength = shoutout ? postTexts.length + 1 : postTexts.length;
   for (let i = 0; i < postTexts.length; i++) {
-    const index = ` (${i + 1}/${postTexts.length})`;
+    const index = ` (${i + 1}/${threadLength})`;
     if ((postTexts[i] + index).length <= characterLimit) {
       texts[i] = postTexts[i] + index;
     } else {
       texts[i] = postTexts[i];
     }
+  }
+
+  if (shoutout) {
+    texts.push(
+      `This thread was created by Longpost. Try it out at: https://mohit2152sharma.github.io/bsky-projects/ (${threadLength}/${threadLength})`,
+    );
   }
   return { texts: texts, error: false, message: "" };
 }
@@ -93,10 +102,17 @@ function createThread(
 async function bskyThreads(
   pdsURL: string = PDS_URL,
   session: SessionData,
-  text: string,
+  parsedValues: ParsedValues,
+  // text: string,
   characterLimit: number = CHARACTER_LIMIT,
 ) {
-  const { texts, error, message } = createThread(text, characterLimit);
+  let text = parsedValues.content;
+  const shoutout = parsedValues.shoutout;
+  const { texts, error, message } = createThread(
+    text,
+    shoutout,
+    characterLimit,
+  );
   if (error) {
     return { error: error, message: message, success: false };
   }

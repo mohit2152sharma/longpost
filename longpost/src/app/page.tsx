@@ -7,8 +7,10 @@ import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "~/components/ui/form";
 import { Content, contentSchema } from "~/components/editor/editor-types";
@@ -17,6 +19,7 @@ import { bskyThreads } from "~/lib/post";
 import { toast } from "sonner";
 import { Toaster } from "sonner";
 import { Textarea } from "~/components/ui/textarea";
+import { Checkbox } from "~/components/ui/checkbox";
 
 export default function Home() {
   const router = useRouter();
@@ -37,7 +40,7 @@ export default function Home() {
 
   const form = useForm<Content>({
     resolver: zodResolver(contentSchema),
-    defaultValues: { content: "" },
+    defaultValues: { content: "", shoutout: true },
   });
 
   const {
@@ -47,26 +50,16 @@ export default function Home() {
   } = form;
 
   async function onSubmit(values: Content) {
-    const formData = new FormData();
-
-    Object.entries(values).forEach(([key, value]) => {
-      if (value) {
-        formData.append(key, value);
-      }
-    });
-
-    const parsedValues = contentSchema.parse(
-      Object.fromEntries(formData.entries()),
-    );
-
+    const parsedValues = contentSchema.parse(values);
     console.log(parsedValues);
+
     const sessionData = JSON.parse(
       sessionStorage.getItem("sessionData") as string,
     );
     const response = await bskyThreads(
       "https://bsky.social",
       sessionData,
-      parsedValues.content,
+      parsedValues,
     );
     if (!response.success) {
       toast.error(response.message);
@@ -80,12 +73,23 @@ export default function Home() {
       <div className="max-w-4xl mx-auto h-full">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-5xl font-bold p-2 self-center">Longpost</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Logout
-          </button>
+          <div className="space-x-4">
+            <button className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+              <a
+                href="https://ko-fi.com/montepy"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Support me
+              </a>
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Logout
+            </button>
+          </div>
         </div>
         <p className="text-lg font-bold p-2">
           Convert your long posts into threads.
@@ -120,9 +124,29 @@ export default function Home() {
                 </FormItem>
               )}
             />
-            <LoadingBtn type="submit" loading={isSubmitting}>
-              Submit
-            </LoadingBtn>
+            <div className="flex flex-row items-center space-x-4">
+              <LoadingBtn type="submit" loading={isSubmitting}>
+                Submit
+              </LoadingBtn>
+              <FormField
+                control={control}
+                name="shoutout"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row justify-center items-center space-x-3">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="text-center pb-2 justify-center items-center font-light text-sm italic">
+                      Add &quot;created by Longpost&quot; to the end of your
+                      post
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
+            </div>
           </form>
         </Form>
       </div>
