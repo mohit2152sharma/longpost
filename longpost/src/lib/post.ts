@@ -128,7 +128,7 @@ async function bskyThreads(
     for (text of texts as string[]) {
       const post = await createBskyPost(agent, pdsURL, session, text, reply);
       reply = {
-        root: { cid: post.cid, uri: post.uri },
+        root: { cid: post0.cid, uri: post0.uri },
         parent: { cid: post.cid, uri: post.uri },
       };
     }
