@@ -27,7 +27,7 @@ runs:
       with:
         path: node_modules
         # TODO: use correct path for hash key
-        key: node-modules-${{ hashFiles('longpost/pnpm-lock.yaml') }}
+        key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
 
     - name: Install dependencies 🔧
       shell: bash
