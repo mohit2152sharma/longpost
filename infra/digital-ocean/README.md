@@ -10,15 +10,15 @@ So, let's assume you've used DreamHost or GoDaddy and put a few dollars down. We
 
 Most importantly, though, are the nameservers used to register records for this domain name, which you will likely need to either a) provide at purchase time, or b) customize once you've purchased your domain. Point those to DigitalOcean, which we'll be using to flesh out our tech stack, and we'll get going:
 
-* `ns1.digitalocean.com`
+- `ns1.digitalocean.com`
 
-* `ns2.digitalocean.com`
+- `ns2.digitalocean.com`
 
-* `ns3.digitalocean.com`
+- `ns3.digitalocean.com`
 
 ## Setting Up the Project
 
-Another reason we wanted to get the domain name registered first is, it's the only thing we can't define in static IAC (infrastructure-as-code). We'll be using Terraform to flesh our the rest of our Kubernetes journey here, and in combination with DigitalOcean that means *EVERYTHING* will be nicely encapsulated in Terraform resources. Now that we've pointed to the DigitalOcean nameservers (which will also dovetail nicely with cert registration later on), we can start writing our Terraform code.
+Another reason we wanted to get the domain name registered first is, it's the only thing we can't define in static IAC (infrastructure-as-code). We'll be using Terraform to flesh our the rest of our Kubernetes journey here, and in combination with DigitalOcean that means _EVERYTHING_ will be nicely encapsulated in Terraform resources. Now that we've pointed to the DigitalOcean nameservers (which will also dovetail nicely with cert registration later on), we can start writing our Terraform code.
 
 To deploy DigitalOcean resources, we'll need an account and an API key. Like most cloud providers, DigitalOcean comes with some nice complementary credits upon signup. I'll pause here and take a break while you go get your token.
 
@@ -33,7 +33,7 @@ variable "DO_TOKEN" {
 }
 ```
 
-We'll now use this token to create our `providers.tf` file at the top level of our project. *THIS IS A REALLY NEAT TRICK*: If you have a Terraform variable, it will by default be populated by an environmental variable (if one exists) that has the `TF_VAR_` prefixed to the same name. This is a slick Terraform behavior, and keeps you from being overly-reliant on a `.tfvars` file that could get accidentally added to version control.
+We'll now use this token to create our `providers.tf` file at the top level of our project. _THIS IS A REALLY NEAT TRICK_: If you have a Terraform variable, it will by default be populated by an environmental variable (if one exists) that has the `TF_VAR_` prefixed to the same name. This is a slick Terraform behavior, and keeps you from being overly-reliant on a `.tfvars` file that could get accidentally added to version control.
 
 ```tf
 terraform {
@@ -74,7 +74,7 @@ terraform {
 }
 ```
 
-Lastly, we'll want to make sure this module is included in our top-level `main.tf` file. I tend to include nothing *BUT* modules here, because it lets me cleanly map dependencies (including variable values) between each "step" or "app" in the deployment process.
+Lastly, we'll want to make sure this module is included in our top-level `main.tf` file. I tend to include nothing _BUT_ modules here, because it lets me cleanly map dependencies (including variable values) between each "step" or "app" in the deployment process.
 
 ```tf
 module "doproject" {
@@ -110,7 +110,7 @@ Run `terraform apply` and... poof! You have a functioning Kubernetes cluster! Co
 
 Before we get too excited, though, let's make sure this cluster is organized under the DigitalOcean project we created; modify `doproject.tf` to include it:
 
-```tf
+````tf
 resource "digitalocean_project" "doproject" {
   name        = "doproject"
   description = "A project to represent development resources"
@@ -133,7 +133,7 @@ output "KUBECONFIG" {
     value = digitalocean_kubernetes_cluster.docluster.kube_config[0].raw_config
     sensitive = true
 }
-```
+````
 
 Now, we can add another `outputs.tf` to the top-level project that will, in turn, let us extract the config from the command line.
 
@@ -144,7 +144,7 @@ output "KUBECONFIG" {
 }
 ```
 
-Run another `terraform apply` and you'll be able to pipe the results to a file (which you should *DEFINITELY* add to your `.gitignore`) and identify with a `$KUBECONFIG` environmental variable:
+Run another `terraform apply` and you'll be able to pipe the results to a file (which you should _DEFINITELY_ add to your `.gitignore`) and identify with a `$KUBECONFIG` environmental variable:
 
 ```sh
 > terraform output -raw KUBECONFIG > kubeconfig.yaml
@@ -375,11 +375,11 @@ A careful observer will note that we didn't define a Service "type". In our case
 
 And here's where things get fun. A traditional cluster will have at least three "meta" applications running at any given time:
 
-* A load balancer, to define an entry point for distribution of traffic
+- A load balancer, to define an entry point for distribution of traffic
 
-* An ingress controller, for enforcing ingress rules against the load balancer traffic-routing policies
+- An ingress controller, for enforcing ingress rules against the load balancer traffic-routing policies
 
-* A cert manager, for automatically securing ingress TLS termination
+- A cert manager, for automatically securing ingress TLS termination
 
 Load balancers are particularly sticky. If you are operating an on-prem cluster, you will likely be using something like MetalLB (or something provided by your Kubernetes "substrate", like k3s or microk8s, automatically). However, if you are operating on a provider, like AWS or DigitalOcean, the load balancer is implemented by the provider.
 
@@ -461,7 +461,7 @@ module "wwwnamespace" {
 }
 ```
 
-Run a `terraform apply` and you'll see the ingress spin up. But, you can't access anything yet, because nothing is "enforcing" the ingress rule (e.g., we don't have an ingress controller), and there is no external IP assigned. Let's handle this next. But, fortunately, you'll only need to set up those things once before the previous steps will work for *all* of your similarly-deployed applications.
+Run a `terraform apply` and you'll see the ingress spin up. But, you can't access anything yet, because nothing is "enforcing" the ingress rule (e.g., we don't have an ingress controller), and there is no external IP assigned. Let's handle this next. But, fortunately, you'll only need to set up those things once before the previous steps will work for _all_ of your similarly-deployed applications.
 
 ## The Ingress, It Must Be Controlled!
 
@@ -513,7 +513,7 @@ terraform {
     helm = {
       source = "hashicorp/helm"
       version = "2.12.1"
-    }    
+    }
   }
 }
 
@@ -998,7 +998,7 @@ resource "kubernetes_ingress_v1" "wwwingress" {
 }
 ```
 
-Now run a `terraform apply` and look for Certificate resources (created automatically). 
+Now run a `terraform apply` and look for Certificate resources (created automatically).
 
 ```sh
 > kubectl get Certificates --all-namespaces
@@ -1127,15 +1127,15 @@ Incremental applications will be able to reuse the same cert manager, project re
 
 Instead, each application will probably only have a small set of resources, configured with appropriate bindings to cluster-wide utilities:
 
-* Databases using something like StatefulSets and backed by Persistent Volume Templates (though your underlying storage solution may vary)
+- Databases using something like StatefulSets and backed by Persistent Volume Templates (though your underlying storage solution may vary)
 
-* Containers using Kubernetes deployments
+- Containers using Kubernetes deployments
 
-* Services for both exposed with Kubernetes service resources
+- Services for both exposed with Kubernetes service resources
 
-* Ingresses to define external routes "into" public service endpoints
+- Ingresses to define external routes "into" public service endpoints
 
-* Individual namespaces to wrap up each application within its own isolated concerns
+- Individual namespaces to wrap up each application within its own isolated concerns
 
 In other words, we have a decently high-grade Kubernetes cluster here, and it's all automated with static IAC. Slick.
 

@@ -7,6 +7,7 @@
 	import type { PageData } from '../../routes/$types';
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import type { LoginCredentialsSchemaType } from '$lib/server/bsky/types';
+	import LoadingButton from './custom-comps/loading-button.svelte';
 
 	export let data: PageData & { form: LoginCredentialsSchemaType };
 	const { form, submitting, enhance } = superForm(data.form);
@@ -50,13 +51,14 @@
 						required
 					/>
 				</div>
-				<Button type="submit" class="w-full" variant="default">
-					{#if $submitting}
-						<LoaderCircle class="animate-spin" />
-					{:else}
-						Login
-					{/if}
-				</Button>
+				<LoadingButton submitting={$submitting} cls="w-full" />
+				<!-- <Button type="submit" class="w-full" variant="default"> -->
+				<!-- 	{#if $submitting} -->
+				<!-- 		<LoaderCircle class="animate-spin" /> -->
+				<!-- 	{:else} -->
+				<!-- 		Login -->
+				<!-- 	{/if} -->
+				<!-- </Button> -->
 			</div>
 		</form>
 		<div class="mt-4 text-center text-sm">

@@ -1,15 +1,15 @@
 name: setup-node
-description: "Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧"
+description: 'Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧'
 inputs:
   working-directory:
-    description: "Working directory"
+    description: 'Working directory'
     required: true
   node-env:
-    description: "Node Environment"
+    description: 'Node Environment'
     required: false
-    default: "production"
+    default: 'production'
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Setup Node.js ⚙️
       uses: actions/setup-node@v4

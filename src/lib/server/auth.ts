@@ -70,7 +70,7 @@ export const sessionCookieName = 'auth-session';
 export function setSessionTokenCookie(event: RequestEvent, token: string) {
 	event.cookies.set(sessionCookieName, token, {
 		path: '/',
-		httpOnly: true, 
+		httpOnly: true,
 		secure: true
 	});
 }
