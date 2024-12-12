@@ -1,0 +1,1 @@
+-- Script for creating post table in postgres table
