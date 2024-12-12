@@ -15,6 +15,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 	}
 
 	event.locals.user = JSON.parse(sessionToken);
+	console.debug(`headers sent by client: ${event.request.headers}`);
 
 	// TODO: Reuse the following code for session management with database
 	// const { session, user } = await auth.validateSessionToken(sessionToken);
