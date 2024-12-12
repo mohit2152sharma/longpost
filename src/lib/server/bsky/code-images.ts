@@ -16,7 +16,7 @@ interface CodeSnippet {
 interface CodeImage {
 	title: string;
 	imageProperties: ImageProperties;
-	code: string;
+	code: string
 }
 
 interface ImageProperties {
