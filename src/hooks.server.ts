@@ -5,12 +5,14 @@ import { handleLoginRedirect } from '$lib/utils';
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	if (pathname.startsWith('/login')) {
+		console.log(`headers sent by client: ${event.request.headers}`);
 		return resolve(event);
 	}
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
 		event.locals.user = null;
 		const redirectTo = handleLoginRedirect(event);
+		console.log(`headers sent by client: ${event.request.headers}`);
 		throw redirect(302, redirectTo);
 	}
 
