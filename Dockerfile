@@ -10,4 +10,4 @@ COPY . .
 RUN bun run build
 
 EXPOSE 3000
-ENTRYPOINT ["bun", "./build"]
+ENTRYPOINT ["ORIGIN=https://longpost.in", "bun", "./build"]
