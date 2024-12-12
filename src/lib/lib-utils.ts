@@ -29,7 +29,9 @@ async function retryFetch(
 				body: body
 			});
 			if (!lastResponse.ok) {
-				console.error(`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`);
+				console.error(
+					`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`
+				);
 				console.log(`Retrying in ${retryCount + 1} seconds...`);
 				retryCount++;
 			} else {
