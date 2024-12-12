@@ -10,5 +10,5 @@ COPY . .
 RUN bun run build
 
 EXPOSE 3000
-ENV ORIGIN=https://longpost.in
+ENV ORIGIN=http://longpost.in
 ENTRYPOINT ["bun", "./build"]
