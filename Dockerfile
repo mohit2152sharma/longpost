@@ -10,7 +10,7 @@ COPY . .
 RUN bun run build
 
 EXPOSE 3000
-ENV ORIGIN https://longpost.in
+ENV ORIGIN longpost.in
 ENV PROTOCOL_HEADER x-forwarded-proto
 ENV HOST_HEADER x-forwarded-host
 ENTRYPOINT ["bun", "./build"]
