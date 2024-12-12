@@ -5,19 +5,19 @@ import { handleLoginRedirect } from '$lib/utils';
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	if (pathname.startsWith('/login')) {
-		console.log(`headers sent by client: ${event.request.headers}`);
+		console.log(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
 		return resolve(event);
 	}
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 	if (!sessionToken) {
 		event.locals.user = null;
 		const redirectTo = handleLoginRedirect(event);
-		console.log(`headers sent by client: ${event.request.headers}`);
+		console.log(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
 		throw redirect(302, redirectTo);
 	}
 
 	event.locals.user = JSON.parse(sessionToken);
-	console.debug(`headers sent by client: ${event.request.headers}`);
+	console.debug(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
 
 	// TODO: Reuse the following code for session management with database
 	// const { session, user } = await auth.validateSessionToken(sessionToken);
