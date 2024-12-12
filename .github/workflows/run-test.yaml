@@ -11,16 +11,13 @@ permissions:
   pages: write
   id-token: write
 
-env:
-  NODE_ENV: production
-
 concurrency:
-  group: 'pages'
-  cancel-in-progress: false
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: ubuntu-lates
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
