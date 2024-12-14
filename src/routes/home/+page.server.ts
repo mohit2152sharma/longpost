@@ -12,12 +12,9 @@ export const actions = {
 	default: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const form = await superValidate(formData, zod(BskyContentSchema));
-		console.log(formData);
-		console.log(form);
 
 		if (form.valid) {
 			const parsedValues = BskyContentSchema.parse(form.data);
-			console.log('🪚 parsedValues:', parsedValues);
 
 			const sessionData = {
 				did: event.locals.user!.bskyDid,
