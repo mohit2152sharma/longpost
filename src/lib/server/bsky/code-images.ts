@@ -1,9 +1,7 @@
 import { codeToHtml } from 'shiki';
 import puppeteer from 'puppeteer';
-import fs from 'fs';
-import path, { dirname } from 'path';
-import { fileURLToPath } from 'url';
 import { onlyOneParam } from '$lib/lib-utils';
+import { getHtmlString } from './code-template';
 
 interface CodeSnippet {
 	language?: string;
@@ -110,25 +108,11 @@ async function renderCodeSnippet(
 	onlyOneParam(snippetIndex, imageTitle);
 	const title = imageTitle ? imageTitle : `image_${snippetIndex}`;
 	const htmlCode = await renderCodeTextToHtml(code, lang);
-	const html = await readHtmlFileAsTemplate('apple-window.html', {
-		code: htmlCode,
-		imageTitle: title
-	});
+	const html = await getHtmlString(title, htmlCode)
 	const imageProperties = await htmlToImage(html, outputPath);
 	return { title, imageProperties, code };
 }
 
-async function readHtmlFileAsTemplate(filePath: string, variables: Record<string, string>) {
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = dirname(__filename);
-	const absolutePath = path.resolve(__dirname, filePath);
-	let content = await fs.promises.readFile(absolutePath, 'utf-8');
-	for (const [key, value] of Object.entries(variables)) {
-		const regex = new RegExp(`\\$\\{${key}\\}`, 'g');
-		content = content.replace(regex, value);
-	}
-	return content;
-}
 
 export {
 	type CodeImage,

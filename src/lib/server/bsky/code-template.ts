@@ -1,4 +1,5 @@
-<!doctype html>
+async function getHtmlString(imageTitle: string, code: string): Promise<string> {
+	const htmlString = `<!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
@@ -69,4 +70,8 @@
 			<div class="content">${code}</div>
 		</div>
 	</body>
-</html>
+</html>`
+	return htmlString
+}
+
+export { getHtmlString }
