@@ -17,23 +17,18 @@ runs:
       with:
         node-version: 22.10.0
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 9
-
     - name: Cache dependencies ⚡
       id: cache_dependencies
       uses: actions/cache@v3
       with:
         path: node_modules
         # TODO: use correct path for hash key
-        key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+        key: node-modules-${{ hashFiles('package-lock.json') }}
 
     - name: Install dependencies 🔧
       shell: bash
       if: steps.cache_dependencies.outputs.cache-hit != 'true'
-      run: pnpm install --frozen-lockfile
+      run: npm ci
       working-directory: ${{ inputs.working-directory }}
       env:
         NODE_ENV: ${{ inputs.NODE_ENV }}
