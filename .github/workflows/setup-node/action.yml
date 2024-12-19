@@ -3,23 +3,18 @@ description: 'Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependenci
 inputs:
   working-directory:
     description: 'Working directory'
-    required: true
+    required: false
+    default: '.'
   node-env:
     description: 'Node Environment'
-    required: false
-    default: 'production'
+    required: true
 runs:
   using: 'composite'
   steps:
     - name: Setup Node.js ⚙️
       uses: actions/setup-node@v4
       with:
-        node-version: 20
-
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 9
+        node-version: 22.10.0
 
     - name: Cache dependencies ⚡
       id: cache_dependencies
@@ -27,12 +22,12 @@ runs:
       with:
         path: node_modules
         # TODO: use correct path for hash key
-        key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+        key: node-modules-${{ hashFiles('package-lock.json') }}
 
     - name: Install dependencies 🔧
       shell: bash
       if: steps.cache_dependencies.outputs.cache-hit != 'true'
-      run: pnpm install --frozen-lockfile
+      run: npm install
       working-directory: ${{ inputs.working-directory }}
       env:
         NODE_ENV: ${{ inputs.NODE_ENV }}
