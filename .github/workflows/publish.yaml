@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  run-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,8 +24,10 @@ jobs:
         uses: ./.github/workflows/setup-node
         with:
           node-env: development
-      - name: Run tests
-        run: npm run test
+      - name: Run unit tests
+        run: npm run test:unit -- --coverage.enabled=true
+      - name: Run playwrite tests
+        run: npm run test:e2e
       - name: Report converage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
