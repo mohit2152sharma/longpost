@@ -29,12 +29,12 @@ export function getDbConfig(
 	port: number;
 	dbName: string;
 } {
-	const _usrename = username || (checkEnvParam('DATABASE_USERNAME', true) as string);
+	const _username = username || (checkEnvParam('DATABASE_USERNAME', true) as string);
 	const _password = password || (checkEnvParam('DATABASE_PASSWORD', true) as string);
 	const _host = host || (checkEnvParam('DATABASE_HOST', true) as string);
 	const _port = port || 5432;
 	const _dbName = dbName || 'longpost';
-	return { username: _usrename, password: _password, host: _host, port: _port, dbName: _dbName };
+	return { username: _username, password: _password, host: _host, port: _port, dbName: _dbName };
 }
 
 let database_url: string;
@@ -44,8 +44,9 @@ if (env.MY_ENV === 'development' || env.MY_ENV === 'test') {
 	if (!env.DATABASE_URL) {
 		const dbConfig = getDbConfig();
 		database_url = `postgres://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.dbName}`;
+	} else {
+		database_url = env.DATABASE_URL;
 	}
-	database_url = env.DATABASE_URL;
 }
 const client = postgres(database_url);
 export const db = drizzle(client);

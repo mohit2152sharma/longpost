@@ -5,7 +5,7 @@ type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 const logger = new Logger();
 
 function redirectToLogin(event: RequestEvent) {
-	const redirectTo = event.url.pathname + event.url.search;
+	const redirectTo = encodeURIComponent(event.url.pathname + event.url.search);
 	return `/login?redirectTo=${redirectTo}`;
 }
 

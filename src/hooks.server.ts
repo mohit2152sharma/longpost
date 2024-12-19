@@ -43,6 +43,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 		}
 	}
 
+	logger.info(`User is authenticated: ${event.locals.user?.handle}`);
 	return resolve(event);
 };
 

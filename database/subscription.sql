@@ -47,7 +47,6 @@ CREATE TABLE subscriptions (
     cancel_at_period_end BOOLEAN NOT NULL DEFAULT FALSE,
     amount NUMERIC,
     currency TEXT,
-    currency_conversion TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
