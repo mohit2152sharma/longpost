@@ -14,6 +14,7 @@ export class Logger {
 		this.level = this.getLogLevel(level);
 	}
 
+	// BUG: unable to extract function from deeply nested stack
 	private getCallerInfo() {
 		const stack = new Error().stack;
 		const callerLine = stack?.split('\n')[5].trim();

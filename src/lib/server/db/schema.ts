@@ -30,7 +30,6 @@ export const subscriptions = pgTable('subscriptions', {
 	billingPeriodStartDate: integer('billing_period_start_date'),
 	amount: numeric('amount'), // Subscription amount
 	currency: text('currency'),
-	currencyConversion: text('currency_conversion'),
 	canceledAt: integer('canceled_at'), // The time at which user canceled the subscription
 	cancelAt: integer('cancel_at'), // The time at which the subscription should be canceled
 	cancelAtPeriodEnd: boolean('cancel_at_period_end').notNull().default(false), // Cancel at period end flag

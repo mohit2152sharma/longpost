@@ -49,6 +49,9 @@ export const actions = {
 
 			try {
 				const userFromDb = await checkAndInsertNewUser(user);
+				if (!userFromDb?.length) {
+					throw new Error('Failed to insert user');
+				}
 				token.userId = userFromDb[0].id;
 				token.isSubscribed = userFromDb[0].isSubscribed;
 			} catch (error) {
@@ -57,7 +60,7 @@ export const actions = {
 
 			setSessionTokenCookie(event, JSON.stringify(token));
 			const redirectTo = event.url.searchParams.get('redirectTo');
-			console.log(redirectTo);
+			logger.info(`${redirectTo}`);
 			if (!redirectTo || redirectTo === '/') {
 				throw redirect(300, '/home');
 			} else {
