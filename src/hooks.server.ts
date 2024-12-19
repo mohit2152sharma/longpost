@@ -42,7 +42,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 			auth.setSessionTokenCookie(event, JSON.stringify(token));
 		}
 	}
-		
+
 	logger.info(`User is authenticated: ${event.locals.user?.handle}`);
 	return resolve(event);
 };
