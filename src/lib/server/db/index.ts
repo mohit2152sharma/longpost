@@ -1,5 +1,5 @@
-import { drizzle } from 'drizzle-orm/node-postgres'
-import * as pg from 'pg';
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres';
 import { env } from '$env/dynamic/private';
 
 export function checkEnvParam(
@@ -51,8 +51,5 @@ if (env.MY_ENV === 'development' || env.MY_ENV === 'test' || env.MY_ENV == 'dev'
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
 }
 
-const { Pool } = pg;
-const pool = new Pool({
-	connectionString: databaseUrl,
-})
-export const db = drizzle({ client: pool });
+const client = postgres(databaseUrl)
+export const db = drizzle(client);
