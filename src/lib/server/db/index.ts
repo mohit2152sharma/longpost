@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres'
-import { Pool } from 'pg';
+import * as pg from 'pg';
 import { env } from '$env/dynamic/private';
 
 export function checkEnvParam(
@@ -51,6 +51,7 @@ if (env.MY_ENV === 'development' || env.MY_ENV === 'test' || env.MY_ENV == 'dev'
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
 }
 
+const { Pool } = pg;
 const pool = new Pool({
 	connectionString: databaseUrl,
 })
