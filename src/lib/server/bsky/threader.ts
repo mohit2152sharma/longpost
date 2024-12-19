@@ -1,6 +1,6 @@
 import { type CodeImage, type CodeSnippet, extractCode, renderCodeSnippet } from './code-images';
-import os from 'os'
-import path from 'path'
+import os from 'os';
+import path from 'path';
 
 type CodeImages = Array<CodeImage>;
 type Post = { text: string; images?: CodeImages };
@@ -20,7 +20,7 @@ async function addCounter(posts: Array<Post>, threadLength: number, characterLim
 	return posts;
 }
 
-async function addShoutout  (posts: Array<Post>, shoutout: boolean, shoutoutMessage?: string)  {
+async function addShoutout(posts: Array<Post>, shoutout: boolean, shoutoutMessage?: string) {
 	if (shoutout) {
 		if (!shoutoutMessage) {
 			shoutoutMessage = `This thread was created by Longpost. Try it out at: https:/www.longpost.in`;
@@ -28,45 +28,45 @@ async function addShoutout  (posts: Array<Post>, shoutout: boolean, shoutoutMess
 		posts.push({ text: shoutoutMessage });
 	}
 	return posts;
-};
+}
 
 async function addImagesToPosts(posts: Array<Post>, codeImages: CodeImages) {
-  for (const [postIndex, post] of posts.entries()) {
-    const imageTitles = [...post.text.matchAll(/(?<=\[)(image_\d+)(?=\])/g)];
-    if (imageTitles.length > 0) {
-      for (const imageTitle of imageTitles) {
-        const image = codeImages.find((image) => image.title === imageTitle[1]);
-        if (!image) {
-          throw new Error(
-            `Found matches for image title but no related images in codeImages. imageTitle: ${imageTitle[1]}`
-          );
-        } else {
-          if (!post.images) {
-            post.images = [image];
-          } else if (post.images.length < 4) {
-            post.images.push(image);
-          } else {
-            let index = postIndex + 1;
-            while (true) {
-              if (index >= posts.length) {
-                posts.push({ text: '', images: [image] });
-                break;
-              } else if (!posts[index].images) {
-                posts[index].images = [image];
-                break;
-              } else if (posts[index].images!.length < 4) {
-                posts[index].images!.push(image);
-                break;
-              } else {
-                index++;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  return posts;
+	for (const [postIndex, post] of posts.entries()) {
+		const imageTitles = [...post.text.matchAll(/(?<=\[)(image_\d+)(?=\])/g)];
+		if (imageTitles.length > 0) {
+			for (const imageTitle of imageTitles) {
+				const image = codeImages.find((image) => image.title === imageTitle[1]);
+				if (!image) {
+					throw new Error(
+						`Found matches for image title but no related images in codeImages. imageTitle: ${imageTitle[1]}`
+					);
+				} else {
+					if (!post.images) {
+						post.images = [image];
+					} else if (post.images.length < 4) {
+						post.images.push(image);
+					} else {
+						let index = postIndex + 1;
+						while (true) {
+							if (index >= posts.length) {
+								posts.push({ text: '', images: [image] });
+								break;
+							} else if (!posts[index].images) {
+								posts[index].images = [image];
+								break;
+							} else if (posts[index].images!.length < 4) {
+								posts[index].images!.push(image);
+								break;
+							} else {
+								index++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	return posts;
 }
 
 async function createThread(
@@ -119,4 +119,12 @@ async function createThread(
 	return { posts, error: false, message: '' };
 }
 
-export { type Post, type CodeImages, createThread, addCounter, getThreadLength, addShoutout, addImagesToPosts };
+export {
+	type Post,
+	type CodeImages,
+	createThread,
+	addCounter,
+	getThreadLength,
+	addShoutout,
+	addImagesToPosts
+};

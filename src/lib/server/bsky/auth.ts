@@ -1,32 +1,10 @@
-import type { User, LoginCredentialsSchemaType } from '$lib/server/bsky/types';
+import type { LoginCredentialsSchemaType, SessionData } from '$lib/server/bsky/types';
 import { BskyAgent } from '@atproto/api';
+import { Logger } from '$lib/logger';
+
+const logger = new Logger();
 
 export const AUTH_TOKEN_KEY = 'auth_token';
-
-export const checkAuthStatus = (): User => {
-	if (typeof window === 'undefined') {
-		return { isAuthenticated: false, token: null };
-	}
-
-	const sessionData = sessionStorage.getItem('sessionData');
-	if (sessionData) {
-		const token = JSON.parse(sessionData).accessJwt;
-		return {
-			isAuthenticated: !!token,
-			token
-		};
-	} else {
-		return { isAuthenticated: false, token: null };
-	}
-};
-
-export const setAuthToken = (token: string): void => {
-	localStorage.setItem(AUTH_TOKEN_KEY, token);
-};
-
-export const removeAuthToken = (): void => {
-	localStorage.removeItem(AUTH_TOKEN_KEY);
-};
 
 export const bskyLogin = async ({ credentials }: { credentials: LoginCredentialsSchemaType }) => {
 	const agent = new BskyAgent({ service: 'https://bsky.social' });
@@ -41,7 +19,24 @@ export const bskyLogin = async ({ credentials }: { credentials: LoginCredentials
 		}
 		return response.data;
 	} catch (err) {
-		console.error(err);
+		logger.error(String(err));
 		return false;
+	}
+};
+
+export const bskyRefreshToken = async (sessionToken: SessionData) => {
+	const response = await fetch('https://bsky.social/xrpc/com.atproto.server.refreshSession', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${sessionToken.refreshJwt}`
+		}
+	});
+
+	if (!response.ok) {
+		logger.error(`Failed to refresh token: ${response.status} ${response.statusText}`);
+		return;
+	} else {
+		return await response.json();
 	}
 };

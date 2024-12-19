@@ -1,5 +1,6 @@
 # FROM oven/bun
 FROM node:22.10.0
+# TODO: Use npm ci for faster pacakge installation
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   fonts-liberation \

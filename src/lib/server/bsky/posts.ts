@@ -15,7 +15,9 @@ import { type Post, createThread } from './threader';
 import fs from 'fs';
 import type { CodeImage } from './code-images';
 import { retryFetch } from '$lib/lib-utils';
+import { Logger } from '$lib/logger';
 
+const logger = new Logger();
 const PDS_URL = 'https://bsky.social';
 const CHARACTER_LIMIT = 300;
 const MAX_IMAGE_SIZE = 1000000;
@@ -146,7 +148,7 @@ async function createBskyPost(
 	if (!response.ok) {
 		throw new Error(`Failed to create post: ${response.statusText}`);
 	} else {
-		console.log('Post created successfully');
+		logger.info('Post created successfully');
 		return await response.json();
 	}
 }
@@ -202,4 +204,12 @@ async function bskyThreads(
 //   return { error: true, message: "Failed to post", success: false };
 // }
 
-export { createBskyPost, PDS_URL, createThread, bskyThreads, uploadImages, createEmbed, bskyUploadImage };
+export {
+	createBskyPost,
+	PDS_URL,
+	createThread,
+	bskyThreads,
+	uploadImages,
+	createEmbed,
+	bskyUploadImage
+};

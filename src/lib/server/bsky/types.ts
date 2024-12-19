@@ -46,6 +46,10 @@ interface BskyPostResponse {
 interface SessionData {
 	accessJwt: string;
 	did: string;
+	refreshJwt: string;
+	handle: string;
+	userId?: string;
+	isSubscribed?: boolean;
 }
 
 interface CreateRecordRequest {

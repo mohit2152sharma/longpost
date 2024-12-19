@@ -14,7 +14,7 @@ interface CodeSnippet {
 interface CodeImage {
 	title: string;
 	imageProperties: ImageProperties;
-	code: string
+	code: string;
 }
 
 interface ImageProperties {
@@ -108,11 +108,10 @@ async function renderCodeSnippet(
 	onlyOneParam(snippetIndex, imageTitle);
 	const title = imageTitle ? imageTitle : `image_${snippetIndex}`;
 	const htmlCode = await renderCodeTextToHtml(code, lang);
-	const html = await getHtmlString(title, htmlCode)
+	const html = await getHtmlString(title, htmlCode);
 	const imageProperties = await htmlToImage(html, outputPath);
 	return { title, imageProperties, code };
 }
-
 
 export {
 	type CodeImage,
