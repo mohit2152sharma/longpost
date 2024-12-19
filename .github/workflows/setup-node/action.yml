@@ -3,7 +3,8 @@ description: 'Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependenci
 inputs:
   working-directory:
     description: 'Working directory'
-    required: true
+    required: false
+    default: '.'
   node-env:
     description: 'Node Environment'
     required: false
@@ -14,7 +15,7 @@ runs:
     - name: Setup Node.js ⚙️
       uses: actions/setup-node@v4
       with:
-        node-version: 20
+        node-version: 22.10.0
 
     - name: Install pnpm
       uses: pnpm/action-setup@v4
