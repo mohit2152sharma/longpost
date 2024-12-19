@@ -1,4 +1,5 @@
 # File: .github/workflows/publish.yml
+# TODO: Add setup to run tests and linting in ci
 name: publish-to-github-pages
 on:
   push:

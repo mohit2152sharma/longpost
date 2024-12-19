@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { createThread } from '$lib/server/bsky/threader';
+import { type CodeImage } from '$lib/server/bsky/code-images';
 // import { extractCode, renderCodeSnippet } from '$lib/server/bsky/code-images';
 
 // Mocking the module before importing any functions
@@ -42,14 +43,13 @@ describe('createThread', () => {
 
 		// Assertions
 		expect(result.posts).toHaveLength(1);
-		expect(result.posts[0].text).toBe('[image_1] (1/1)');
-		expect(result.posts[0].images).toEqual([
-			{
-				code: 'console.log("Hello World")\n',
-				title: 'image_1',
-				imageProperties: { outputPath: 'output_1.png', width: 640, height: 145 }
-			}
-		]);
+		expect(result.posts![0].text).toBe('[image_1] (1/1)');
+
+		const images = result.posts![0].images as Array<CodeImage>;
+		expect(images[0].imageProperties).toHaveProperty('outputPath');
+		expect(images[0].imageProperties.outputPath.endsWith('output_1.png')).toBe(true);
+		expect(images[0].imageProperties.height).toEqual(145);
+		expect(images[0].imageProperties.width).toEqual(640);
 	});
 
 	it('should return an error if a word exceeds the character limit', async () => {

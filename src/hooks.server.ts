@@ -1,35 +1,48 @@
 import { redirect, type Handle } from '@sveltejs/kit';
-import * as auth from '$lib/server/auth.js';
-import { handleLoginRedirect } from '$lib/utils';
+import * as auth from '$lib/server/auth';
+import * as bsky from '$lib/server/bsky/auth';
+import { redirectToLogin } from '$lib/lib-utils';
+import { Logger } from '$lib/logger';
+
+const logger = new Logger();
+const skipLoginCheckUrls = ['/login', '/webhooks/stripe'];
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
-	if (pathname.startsWith('/login')) {
-		console.log(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
+	if (skipLoginCheckUrls.some((url) => pathname.startsWith(url))) {
 		return resolve(event);
 	}
-	const sessionToken = event.cookies.get(auth.sessionCookieName);
+	const sessionToken = auth.getSessionTokenCookie(event);
 	if (!sessionToken) {
 		event.locals.user = null;
-		const redirectTo = handleLoginRedirect(event);
-		console.log(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
+		const redirectTo = redirectToLogin(event);
+		if (!redirectTo) {
+			throw redirect(302, '/home');
+		}
 		throw redirect(302, redirectTo);
 	}
 
 	event.locals.user = JSON.parse(sessionToken);
-	console.debug(`headers sent by client: ${JSON.stringify(event.request.headers)}`);
+	const decodedJwt = auth.decodeJwt(event.locals.user!.accessJwt);
+	if (!decodedJwt || auth.expiredJwt(decodedJwt)) {
+		logger.info('Token has expired, refreshing...');
+		const refreshedToken = await bsky.bskyRefreshToken(JSON.parse(sessionToken));
+		if (!refreshedToken) {
+			throw redirect(302, '/login');
+		} else {
+			const token = {
+				did: refreshedToken.did,
+				accessJwt: refreshedToken.accessJwt,
+				refreshJwt: refreshedToken.refreshJwt,
+				handle: refreshedToken.handle,
+				userId: event.locals.user!.userId,
+				isSubscribed: event.locals.user!.isSubscribed
+			};
+			event.locals.user = token;
+			auth.setSessionTokenCookie(event, JSON.stringify(token));
+		}
+	}
 
-	// TODO: Reuse the following code for session management with database
-	// const { session, user } = await auth.validateSessionToken(sessionToken);
-	// if (session) {
-	// 	auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
-	// } else {
-	// 	auth.deleteSessionTokenCookie(event);
-	// }
-	//
-	// event.locals.user = user;
-	// event.locals.session = session;
-	//
 	return resolve(event);
 };
 

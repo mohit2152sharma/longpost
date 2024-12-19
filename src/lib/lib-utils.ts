@@ -1,4 +1,13 @@
+import type { RequestEvent } from '@sveltejs/kit';
+import { Logger } from './logger';
+
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+const logger = new Logger();
+
+function redirectToLogin(event: RequestEvent) {
+	const redirectTo = event.url.pathname + event.url.search;
+	return `/login?redirectTo=${redirectTo}`;
+}
 
 function onlyOneParam(...args: (string | number | boolean | undefined | null)[]) {
 	if (args.every((arg) => arg)) {
@@ -29,8 +38,10 @@ async function retryFetch(
 				body: body
 			});
 			if (!lastResponse.ok) {
-				console.error(`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`);
-				console.log(`Retrying in ${retryCount + 1} seconds...`);
+				logger.error(
+					`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`
+				);
+				logger.info(`Retrying in ${retryCount + 1} seconds...`);
 				retryCount++;
 			} else {
 				break;
@@ -47,4 +58,4 @@ async function retryFetch(
 	return lastResponse || new Response(null, { status: 500, statusText: 'Fetch failed' });
 }
 
-export { onlyOneParam, retryFetch };
+export { onlyOneParam, retryFetch, redirectToLogin };

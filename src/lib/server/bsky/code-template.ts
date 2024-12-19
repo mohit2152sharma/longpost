@@ -70,8 +70,8 @@ async function getHtmlString(imageTitle: string, code: string): Promise<string> 
 			<div class="content">${code}</div>
 		</div>
 	</body>
-</html>`
-	return htmlString
+</html>`;
+	return htmlString;
 }
 
-export { getHtmlString }
+export { getHtmlString };
