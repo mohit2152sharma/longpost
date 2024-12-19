@@ -25,7 +25,7 @@ jobs:
         with:
           node-env: development
       - name: Run tests
-        run: npx vitest --coverage.enabled true
+        run: npm run test
       - name: Report converage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
