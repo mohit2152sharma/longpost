@@ -1,6 +1,12 @@
 # FROM oven/bun
 FROM node:22.10.0
-# TODO: Use npm ci for faster pacakge installation
+
+# TODO: Use docker secrets for api secrets and not build args
+# dokploy doesn't support docker secrets as a workaround using build args
+ARG DATABASE_URL
+ARG STRIPE_SECRET_KEY
+ARG STRIPE_WEBHOOK_SECRET
+ARG MY_ENV=dev
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   fonts-liberation \
@@ -31,10 +37,8 @@ COPY package.json package.json
 COPY package-lock.json package-lock.json
 # RUN bun install
 # COPY package.json package.json 
-RUN npm i 
+RUN npm ci 
 
-# TODO: set correct database url
-ENV DATABASE_URL=postgres://postgres:postgres@localhost:5432/longpost
 COPY . .
 # RUN bun run build
 RUN npm run build
