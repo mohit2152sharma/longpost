@@ -7,9 +7,6 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  NODE_ENV: production
-
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
@@ -26,7 +23,7 @@ jobs:
       - name: Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧
         uses: ./.github/workflows/setup-node
         with:
-          node-env: ${{ env.NODE_ENV }}
+          node-env: development
       - name: Run tests
         run: npx vitest --coverage.enabled true
       - name: Report converage
