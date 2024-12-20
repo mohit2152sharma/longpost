@@ -1,4 +1,5 @@
 import { type CodeImage, type CodeSnippet, extractCode, renderCodeSnippet } from './code-images';
+import crypto from 'crypto';
 import os from 'os';
 import path from 'path';
 
@@ -80,7 +81,6 @@ async function createThread(
 	if (codeSnippets.length !== 0) {
 		for (const [index, snippet] of codeSnippets.entries()) {
 			const title = `image_${index + 1}`;
-			// FIXME: What if there are two codesnippet exactly same
 			text = text.replace(snippet.codeSnippet, `[${title}]`);
 			const imageId = crypto.randomUUID();
 			const imageName = `code-image-${imageId}.png`;

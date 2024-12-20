@@ -80,6 +80,7 @@ async function uploadImages(
 			blobs.push(blob);
 		} catch (error) {
 			logger.error(`Failed to upload image: ${error}`);
+			throw error
 		} finally {
 			await removeFile(image.imageProperties.outputPath);
 		}
