@@ -127,8 +127,6 @@ async function createBskyPost(
 		createdAt: now,
 		reply: reply
 	};
-	// if post has images, uplaod them
-	// TODO: Add cleanup files once the post is uploaded
 	if (post.images && post.images.length > 0) {
 		const blobs = await uploadImages(post.images, session, pdsUrl);
 		bskyPost.embed = await createEmbed(post.images, blobs);
