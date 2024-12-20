@@ -14,7 +14,7 @@ import { BskyAgent, RichText } from '@atproto/api';
 import { type Post, createThread } from './threader';
 import fs from 'fs';
 import type { CodeImage } from './code-images';
-import { retryFetch } from '$lib/lib-utils';
+import { removeFile, retryFetch } from '$lib/lib-utils';
 import { Logger } from '$lib/logger';
 
 const logger = new Logger();
@@ -68,15 +68,22 @@ async function uploadImages(
 ): Promise<Array<ImageBlobType>> {
 	const blobs: Array<ImageBlobType> = [];
 	for (const image of images) {
-		const blob = await bskyUploadImage(
-			pdsUrl,
-			image.imageProperties.outputPath,
-			session,
-			'image/png',
-			retry,
-			retryLimit
-		);
-		blobs.push(blob);
+		try {
+			const blob = await bskyUploadImage(
+				pdsUrl,
+				image.imageProperties.outputPath,
+				session,
+				'image/png',
+				retry,
+				retryLimit
+			);
+			blobs.push(blob);
+		} catch (error) {
+			logger.error(`Failed to upload image: ${error}`);
+			throw error
+		} finally {
+			await removeFile(image.imageProperties.outputPath);
+		}
 	}
 	return blobs;
 }
@@ -102,11 +109,11 @@ async function createEmbed(images: Array<CodeImage>, blobs: Array<ImageBlobType>
 	return embed;
 }
 
+// TODO: Do proper error handling to propagate to the end user if upload fails
 async function createBskyPost(
 	agent: BskyAgent,
 	pdsUrl: string = PDS_URL,
 	session: SessionData,
-	// text: string,
 	post: Post,
 	reply?: BskyReply
 ): Promise<BskyPostResponse> {
@@ -120,8 +127,6 @@ async function createBskyPost(
 		createdAt: now,
 		reply: reply
 	};
-	// if post has images, uplaod them
-	// TODO: Add cleanup files once the post is uploaded
 	if (post.images && post.images.length > 0) {
 		const blobs = await uploadImages(post.images, session, pdsUrl);
 		bskyPost.embed = await createEmbed(post.images, blobs);
@@ -168,7 +173,6 @@ async function bskyThreads(
 	}
 	try {
 		const agent = new BskyAgent({ service: pdsURL });
-		// const text0 = texts?.shift() as string;
 		const post0 = posts?.shift() as Post;
 		const bskyPost0 = await createBskyPost(agent, pdsURL, session, post0);
 		let reply: BskyReply = {

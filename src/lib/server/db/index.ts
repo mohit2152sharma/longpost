@@ -1,4 +1,4 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
+import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { env } from '$env/dynamic/private';
 
@@ -32,8 +32,8 @@ export function getDbConfig(
 	const _username = username || (checkEnvParam('DATABASE_USERNAME', true) as string);
 	const _password = password || (checkEnvParam('DATABASE_PASSWORD', true) as string);
 	const _host = host || (checkEnvParam('DATABASE_HOST', true) as string);
-	const _port = port || parseInt(checkEnvParam('DATABASE_PORT', true) as string)
-	const _dbName = dbName || checkEnvParam('DATABASE_NAME', true) as string;
+	const _port = port || parseInt(checkEnvParam('DATABASE_PORT', true) as string);
+	const _dbName = dbName || (checkEnvParam('DATABASE_NAME', true) as string);
 	return { username: _username, password: _password, host: _host, port: _port, dbName: _dbName };
 }
 
@@ -51,5 +51,5 @@ if (env.MY_ENV === 'development' || env.MY_ENV === 'test' || env.MY_ENV == 'dev'
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
 }
 
-const client = postgres(databaseUrl)
+const client = postgres(databaseUrl);
 export const db = drizzle(client);

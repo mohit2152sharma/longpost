@@ -1,5 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
+import fs from 'fs/promises';
 
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 const logger = new Logger();
@@ -58,4 +59,25 @@ async function retryFetch(
 	return lastResponse || new Response(null, { status: 500, statusText: 'Fetch failed' });
 }
 
-export { onlyOneParam, retryFetch, redirectToLogin };
+async function removeFile(filePath: string): Promise<void> {
+	try {
+		logger.info(`Removing file ${filePath}`);
+		await fs.unlink(filePath);
+	} catch (e: unknown) {
+		if (isNodeError(e)) {
+			if (e.code === 'ENOENT') {
+				logger.error(`File ${filePath} does not exist`);
+			} else {
+				logger.error(`Error while removing file ${filePath}: ${e.message}`);
+			}
+		} else {
+			logger.error(`Error while removing file ${filePath}: ${e}`);
+		}
+	}
+}
+
+function isNodeError(e: unknown): e is NodeJS.ErrnoException {
+	return e instanceof Error && 'code' in e;
+}
+
+export { onlyOneParam, retryFetch, redirectToLogin, removeFile };
