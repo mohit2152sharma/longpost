@@ -82,7 +82,8 @@ async function createThread(
 			const title = `image_${index + 1}`;
 			// FIXME: What if there are two codesnippet exactly same
 			text = text.replace(snippet.codeSnippet, `[${title}]`);
-			const imageName = `output_${index + 1}.png`;
+			const imageId = crypto.randomUUID();
+			const imageName = `code-image-${imageId}.png`;
 			const imagePath = path.join(os.tmpdir(), imageName);
 			const codeImage = await renderCodeSnippet(snippet, imagePath, { imageTitle: title });
 			codeImages.push(codeImage);

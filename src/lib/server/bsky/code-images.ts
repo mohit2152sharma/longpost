@@ -2,6 +2,9 @@ import { codeToHtml } from 'shiki';
 import puppeteer from 'puppeteer';
 import { onlyOneParam } from '$lib/lib-utils';
 import { getHtmlString } from './code-template';
+import { Logger } from '$lib/logger';
+
+const logger = new Logger();
 
 interface CodeSnippet {
 	language?: string;
@@ -90,6 +93,7 @@ async function htmlToImage(html: string, outputPath: string): Promise<ImagePrope
 				type: 'png',
 				captureBeyondViewport: true
 			});
+			logger.info(`Image saved to ${outputPath}`);
 		}
 	}
 

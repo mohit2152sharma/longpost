@@ -6,3 +6,11 @@ CREATE TABLE posts (
     created_by UUID NOT NULL,
     CONSTRAINT fk_created_by FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE SET NULL
 );
+
+ALTER TABLE posts ADD COLUMN updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL;
+
+-- Create the trigger that calls the above function before any UPDATE
+CREATE TRIGGER trigger_set_updated_at
+BEFORE UPDATE ON posts
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
