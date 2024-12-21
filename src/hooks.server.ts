@@ -10,7 +10,7 @@ const skipLoginCheckUrls = ['/login', '/webhooks/stripe'];
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	const sessionToken = auth.getSessionTokenCookie(event);
-	if (skipLoginCheckUrls.some((url) => pathname.startsWith(url)) || pathname === "/") {
+	if (skipLoginCheckUrls.some((url) => pathname.startsWith(url)) || pathname === '/') {
 		return resolve(event);
 	}
 	if (!sessionToken) {

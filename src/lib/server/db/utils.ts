@@ -110,15 +110,11 @@ export const upsertSubscriber = async (
 		.onConflictDoUpdate({ set: subscriber, target: subscriptions.stripeCustomerId });
 };
 
-export const checkAndInsertNewSubscriber = async (
-	subscriber: SubscriptionInsert
-): Promise<Array<SubscriptionSelect>> => {
-	const existingSubscriber = await getSubscriber({ stripeCustomerId: subscriber.stripeCustomerId });
-	if (existingSubscriber.length === 0) {
-		logger.info("Subscriber doesn't exist in db inserting");
-		return await insertNewSubscriber(subscriber);
-	} else {
-		logger.info('Subscriber already exists');
-	}
-	return existingSubscriber;
+export const checkSubscription = async (userId: string): Promise<boolean> => {
+	const subscription = await getSubscriber({ userId });
+	return subscription.length === 0
+		? false
+		: subscription[0].subscriptionStatus === 'active'
+			? true
+			: false;
 };

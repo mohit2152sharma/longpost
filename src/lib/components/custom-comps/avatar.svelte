@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	export let userName: string = 'BS';
-	let avatar: string
+	let avatar: string;
 
 	if (userName.length > 2) {
 		avatar = userName.slice(0, 2).toUpperCase();

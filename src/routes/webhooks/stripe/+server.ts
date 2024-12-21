@@ -4,6 +4,11 @@ import { checkEnvParam } from '$lib/server/db';
 import { Logger } from '$lib/logger';
 import { updateSubscriber, upsertSubscriber } from '$lib/server/db/utils';
 import type { SubscriptionInsert } from '$lib/server/db/schema';
+import { isEnvProd } from '$lib/lib-utils';
+
+function createErrorMsg(error: Error): string {
+	return isEnvProd() ? `Error processing webhook, error message: ${error.message}` : `Error processing webhook, error stack: ${error.stack}`;
+}
 
 const logger = new Logger();
 logger.info('Loading stripe secrets');
@@ -12,9 +17,10 @@ const STRIPE_WEBHOOK_SECRET = checkEnvParam('STRIPE_WEBHOOK_SECRET', true) as st
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const POST: RequestHandler = async ({ request }) => {
-	let event: Stripe.Event;
+export const POST: RequestHandler = async (event) => {
+	let stripeEvent: Stripe.Event;
 	// Step 1: Get the raw request body as a buffer
+	const request = event.request;
 	const payload = await request.text();
 	const sig = request.headers.get('stripe-signature');
 	try {
@@ -23,13 +29,13 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error('Missing Stripe signature or webhook secret');
 		}
 
-		event = stripe.webhooks.constructEvent(payload, sig, STRIPE_WEBHOOK_SECRET);
+		stripeEvent = stripe.webhooks.constructEvent(payload, sig, STRIPE_WEBHOOK_SECRET);
 
 		// Step 3: Handle the Stripe event
-		switch (event.type) {
+		switch (stripeEvent.type) {
 			case 'customer.subscription.deleted': {
-				logger.info(`Event type: ${event.type}`);
-				const subscription = event.data.object as Stripe.Subscription;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const subscription = stripeEvent.data.object as Stripe.Subscription;
 
 				const subscriptionId = subscription.id;
 				const stripeCustomerId = subscription.customer;
@@ -44,14 +50,16 @@ export const POST: RequestHandler = async ({ request }) => {
 				try {
 					await updateSubscriber(stripeCustomerId as string, subscriber);
 				} catch (err) {
-					logger.error(`Error updating subscriber: ${err}`);
+					const _err = err as Error;
+					logger.error(`Error updating subscriber: ${_err.stack}`);
+					return error(502, createErrorMsg(_err));
 				}
 				logger.info(`Subscription cancelled: ${subscriptionId} of customer: ${stripeCustomerId}`);
 				break;
 			}
 			case 'customer.subscription.updated': {
-				logger.info(`Event type: ${event.type}`);
-				const subscription = event.data.object as Stripe.Subscription;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const subscription = stripeEvent.data.object as Stripe.Subscription;
 
 				const subscriber: SubscriptionInsert = {
 					subscriptionId: subscription.id as string,
@@ -69,7 +77,9 @@ export const POST: RequestHandler = async ({ request }) => {
 				try {
 					await upsertSubscriber(subscriber);
 				} catch (err) {
-					logger.error(`Error updating subscriber: ${err}`);
+					const _err = err as Error;
+					logger.error(`Error updating subscriber: ${_err.stack}`);
+					return error(502, `Error updating subscriber: ${_err}`);
 				}
 				logger.info(
 					`Subscription updated: ${subscription.id} of customer: ${subscription.customer}`
@@ -77,8 +87,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				break;
 			}
 			case 'checkout.session.completed': {
-				logger.info(`Event type: ${event.type}`);
-				const session = event.data.object as Stripe.Checkout.Session;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const session = stripeEvent.data.object as Stripe.Checkout.Session;
 
 				const stripeCustomerId = session.customer as string;
 				const dbCustomerId = session.client_reference_id as string;
@@ -94,19 +104,22 @@ export const POST: RequestHandler = async ({ request }) => {
 				try {
 					await upsertSubscriber(subscriber);
 				} catch (err) {
-					logger.error(`Error inserting subscriber: ${err}`);
+					const _err = err as Error;
+					logger.error(`Error inserting subscriber: ${_err.stack}`);
+					return error(502, `Error inserting subscriber: ${_err}`);
 				}
 				logger.info(`Checkout session completed: ${session.id}`);
 				break;
 			}
 			default:
-				logger.warn(`Unhandled event type: ${event.type}`);
+				logger.warn(`Unhandled stripeEvent type: ${stripeEvent.type}`);
 		}
 
 		// Step 4: Respond with success
 		return json({ received: true }, { status: 200 });
 	} catch (err) {
-		logger.error(`Error verifying stripe webhook: ${err}`);
+		const _err = err as Error;
+		logger.error(`Error verifying stripe webhook: ${_err.stack}`);
 		return error(400, 'Webhook Error');
 	}
 };

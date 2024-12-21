@@ -3,7 +3,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { fail, message, setError, superValidate } from 'sveltekit-superforms';
 import { BskyContentSchema, type SessionData } from '$lib/server/bsky/types';
 import { bskyThreads } from '$lib/server/bsky/posts';
-import { insertPost } from '$lib/server/db/utils';
+import { checkSubscription, insertPost } from '$lib/server/db/utils';
 import type { PostInsert } from '$lib/server/db/schema';
 import { Logger } from '$lib/logger';
 import { redirect } from '@sveltejs/kit';
@@ -11,19 +11,22 @@ import { redirect } from '@sveltejs/kit';
 const logger = new Logger();
 
 export const load: PageServerLoad = async (event: RequestEvent) => {
-	const user = event.locals.user
+	const user = event.locals.user;
 	if (!user) {
-		logger.info('User is not logged in, redirecting to login page')
-		throw redirect(302, '/login')
+		logger.info('User is not logged in, redirecting to login page');
+		throw redirect(302, '/login');
 	} else {
 		const form = await superValidate(zod(BskyContentSchema));
+		// check if user is subscribed
+		const isSubscribed = await checkSubscription(user.userId)
+
 		return {
 			form,
 			userId: user.userId,
-			isSubscribed: user.isSubscribed,
+			isSubscribed: isSubscribed,
 			bskyHandle: user.handle
-		}
-	};
+		};
+	}
 };
 
 export const actions = {

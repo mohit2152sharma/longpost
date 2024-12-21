@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Avatar from './avatar.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	// import { PUBLIC_STRIPE_CONSOLE_URL } from '$env/static/public';
 	import { env } from '$env/dynamic/public';
 	import { createBskyProfileUrl } from '$lib/lib-utils';
 

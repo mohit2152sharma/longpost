@@ -6,7 +6,7 @@
 	export let type: 'button' | 'submit' | 'reset' | null | undefined = 'submit';
 	export let cls: string = '';
 	// export let variant: string = 'default';
-	export let variant: ButtonVariant = 'default'
+	export let variant: ButtonVariant = 'default';
 	export let animation: string = 'animate-spin';
 	export let buttonTitle: string = 'Login';
 </script>
