@@ -32,7 +32,7 @@ export class ErrorPostUploadImage extends BasePostError {
 
 export class ErrorPostCreate extends BasePostError {
 	constructor(message: string, details?: string) {
-		super('POST_CREATE__ERROR', message, details);
+		super('POST_CREATE_ERROR', message, details);
 	}
 }
 
