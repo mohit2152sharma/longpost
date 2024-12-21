@@ -1,5 +1,6 @@
 import path from 'path';
-import { PUBLIC_LOG_LEVEL } from '$env/static/public';
+// import { PUBLIC_LOG_LEVEL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 enum LogLevel {
 	DEBUG = 'debug',
@@ -34,7 +35,7 @@ export class Logger {
 	getLogLevel(level?: string | LogLevel) {
 		if (!level) {
 			// check if LOG_LEVEL is set in environment
-			level = typeof window === 'undefined' ? PUBLIC_LOG_LEVEL : PUBLIC_LOG_LEVEL;
+			level = typeof window === 'undefined' ? env.PUBLIC_LOG_LEVEL : env.PUBLIC_LOG_LEVEL;
 			if (!level) {
 				return LogLevel.INFO;
 			}

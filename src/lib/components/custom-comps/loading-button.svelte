@@ -3,7 +3,7 @@
 	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 
 	export let submitting: boolean = false;
-	export let type: string = 'submit';
+	export let type: 'button' | 'submit' | 'reset' | null | undefined = 'submit';
 	export let cls: string = '';
 	// export let variant: string = 'default';
 	export let variant: ButtonVariant = 'default'

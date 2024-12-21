@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Avatar from './avatar.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { PUBLIC_STRIPE_CONSOLE_URL } from '$env/static/public';
+	// import { PUBLIC_STRIPE_CONSOLE_URL } from '$env/static/public';
+	import { env } from '$env/dynamic/public';
 	import { createBskyProfileUrl } from '$lib/lib-utils';
 
 	export let bskyHandle: string;
@@ -21,7 +22,7 @@
 				</div>
 				{#if isSubscribed}
 					<div class="">
-						<a href={PUBLIC_STRIPE_CONSOLE_URL} target="_blank">Billing</a>
+						<a href={env.PUBLIC_STRIPE_CONSOLE_URL} target="_blank">Billing</a>
 					</div>
 				{/if}
 				<!-- TODO: Enable help page when enough content is there -->

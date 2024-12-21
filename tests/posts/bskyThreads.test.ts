@@ -1,12 +1,13 @@
 // BUG: Fix bluesky test cases
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { bskyThreads } from '$lib/server/bsky/posts';
+import { vi, type Mock } from 'vitest';
 
 vi.mock('$lib/server/bsky/posts', () => ({
 	bskyThreads: vi.fn()
 }));
 
-const mockBskyThreads = bskyThreads as vi.Mock;
+const mockBskyThreads = bskyThreads as Mock;
 
 describe('bskyThreads', () => {
 	const sessionData = {
