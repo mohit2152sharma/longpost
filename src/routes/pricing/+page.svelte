@@ -1,7 +1,8 @@
 <script lang="ts">
+	import Navbar from '$lib/components/custom-comps/navbar.svelte';
 	import type { PageData } from '../$types';
 
-	export let data: PageData & { userId: string };
+	export let data: PageData & { userId: string; bskyHandle: string; isSubscribed: boolean };
 	const userId = data.userId;
 </script>
 
@@ -9,6 +10,7 @@
 	<script async src="https://js.stripe.com/v3/pricing-table.js"></script>
 </svelte:head>
 
+<Navbar bskyHandle={data.bskyHandle} isSubscribed={data.isSubscribed} />
 <div class="m-10">
 	<stripe-pricing-table
 		pricing-table-id="prctbl_1QV9iRSHacannOAHVM0IBblQ"

@@ -4,7 +4,7 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { LoginCredentialsSchema, type SessionData } from '$lib/server/bsky/types';
 import { bskyLogin } from '$lib/server/bsky/auth';
 import { redirect } from '@sveltejs/kit';
-import { setSessionTokenCookie } from '$lib/server/auth';
+import { deleteSessionTokenCookie, setSessionTokenCookie } from '$lib/server/auth';
 import { Logger } from '$lib/logger';
 import { type UserInsert } from '$lib/server/db/schema';
 import { checkAndInsertNewUser } from '$lib/server/db/utils';
@@ -17,7 +17,7 @@ export const load = async () => {
 };
 
 export const actions = {
-	default: async (event: RequestEvent) => {
+	login: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const form = await superValidate(formData, zod(LoginCredentialsSchema));
 
@@ -62,12 +62,21 @@ export const actions = {
 			const redirectTo = event.url.searchParams.get('redirectTo');
 			logger.info(`${redirectTo}`);
 			if (!redirectTo || redirectTo === '/') {
-				throw redirect(300, '/home');
+				throw redirect(302, '/home');
 			} else {
-				throw redirect(302, `/${redirectTo.slice(1)}`);
+				if (redirectTo.startsWith('/') && !redirectTo.includes('//')) {
+					throw redirect(302, `/${redirectTo.slice(1)}`);
+				} else {
+					throw redirect(302, '/');
+				}
 			}
 		} else {
 			return fail(400, { form });
 		}
+	},
+	logout: async (event: RequestEvent) => {
+		logger.info(`Logging out user: ${event.locals.user?.userId}`);
+		deleteSessionTokenCookie(event);
+		throw redirect(302, '/');
 	}
 };

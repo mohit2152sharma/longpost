@@ -2,6 +2,10 @@ import { type CodeImage, type CodeSnippet, extractCode, renderCodeSnippet } from
 import crypto from 'crypto';
 import os from 'os';
 import path from 'path';
+import { ErrorThreaderInvalidImageTag } from './post-errors';
+import { Logger } from '$lib/logger';
+
+const logger = new Logger();
 
 type CodeImages = Array<CodeImage>;
 type Post = { text: string; images?: CodeImages };
@@ -38,8 +42,8 @@ async function addImagesToPosts(posts: Array<Post>, codeImages: CodeImages) {
 			for (const imageTitle of imageTitles) {
 				const image = codeImages.find((image) => image.title === imageTitle[1]);
 				if (!image) {
-					throw new Error(
-						`Found matches for image title but no related images in codeImages. imageTitle: ${imageTitle[1]}`
+					throw new ErrorThreaderInvalidImageTag(
+						`Found an image title tag but no associated code snippet. Remove image title tag or add a code snippet. imageTitle: ${imageTitle[1]}`
 					);
 				} else {
 					if (!post.images) {
@@ -107,13 +111,25 @@ async function createThread(
 		} else if ((sentence + ' ' + words[i]).length + buffer <= characterLimit) {
 			posts[posts.length - 1].text = (sentence + ' ' + words[i]).trim();
 		} else {
-			// posts.push(words[i]);
 			posts.push({ text: words[i] });
 		}
 	}
 
 	posts = posts.filter((w) => w.text.length > 0);
-	posts = await addImagesToPosts(posts, codeImages);
+	try {
+		posts = await addImagesToPosts(posts, codeImages);
+	} catch (error) {
+		logger.error(String(error));
+		if (error instanceof ErrorThreaderInvalidImageTag) {
+			return { posts: undefined, error: true, message: error.message };
+		} else {
+			return {
+				posts: undefined,
+				error: true,
+				message: 'Unknown error while converting code snippets to images please try after some time'
+			};
+		}
+	}
 	const threadLength = await getThreadLength(posts, shoutout);
 	posts = await addCounter(posts, threadLength, characterLimit);
 	posts = await addShoutout(posts, shoutout);

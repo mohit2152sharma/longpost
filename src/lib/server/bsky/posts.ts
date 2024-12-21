@@ -16,11 +16,10 @@ import fs from 'fs';
 import type { CodeImage } from './code-images';
 import { removeFile, retryFetch } from '$lib/lib-utils';
 import { Logger } from '$lib/logger';
+import { MAX_IMAGE_SIZE, PDS_URL, CHARACTER_LIMIT } from '$lib/constants';
+import * as postErrors from '$lib/server/bsky/post-errors';
 
 const logger = new Logger();
-const PDS_URL = 'https://bsky.social';
-const CHARACTER_LIMIT = 300;
-const MAX_IMAGE_SIZE = 1000000;
 
 async function bskyUploadImage(
 	pdsUrl: string,
@@ -32,9 +31,7 @@ async function bskyUploadImage(
 ): Promise<ImageBlobType> {
 	const imageBytes = await fs.promises.readFile(imagePath);
 	if (imageBytes.length > MAX_IMAGE_SIZE) {
-		throw new Error(
-			`Image size (${imageBytes.length}) is too large. Max size is ${MAX_IMAGE_SIZE} bytes.`
-		);
+		throw new postErrors.ErrorPostImageSize(`Image size (${imageBytes.length}) is too large.`);
 	}
 
 	const fetchUrl = `${pdsUrl}/xrpc/com.atproto.repo.uploadBlob`;
@@ -51,7 +48,7 @@ async function bskyUploadImage(
 	);
 
 	if (!resp.ok) {
-		throw new Error(`Failed to upload image: ${resp.statusText}`);
+		throw new postErrors.ErrorPostUploadImage(`Failed to upload image: ${resp.statusText}`);
 	} else {
 		const data = await resp.json();
 		const blob = data['blob'] as ImageBlobType;
@@ -80,7 +77,7 @@ async function uploadImages(
 			blobs.push(blob);
 		} catch (error) {
 			logger.error(`Failed to upload image: ${error}`);
-			throw error
+			throw error;
 		} finally {
 			await removeFile(image.imageProperties.outputPath);
 		}
@@ -151,14 +148,13 @@ async function createBskyPost(
 	);
 
 	if (!response.ok) {
-		throw new Error(`Failed to create post: ${response.statusText}`);
+		throw new postErrors.ErrorPostCreate(`Failed to create post: ${response.statusText}`);
 	} else {
 		logger.info('Post created successfully');
 		return await response.json();
 	}
 }
 
-// TODO: Add environment variable or option to not post to bsky when in development instead log to console
 async function bskyThreads(
 	pdsURL: string = PDS_URL,
 	session: SessionData,
@@ -169,7 +165,7 @@ async function bskyThreads(
 	const shoutout = parsedValues.shoutout;
 	const { posts, error, message } = await createThread(text, shoutout, characterLimit);
 	if (error) {
-		return { error: error, message: message, success: false };
+		return { message: message, success: false };
 	}
 	try {
 		const agent = new BskyAgent({ service: pdsURL });
@@ -187,26 +183,26 @@ async function bskyThreads(
 				parent: { cid: bskyPost.cid, uri: bskyPost.uri }
 			};
 		}
-		return { error: false, message: '', success: true };
+		return { message: 'Post created successfully', success: true };
 	} catch (error) {
-		return {
-			error: true,
-			message: error instanceof Error ? error.message : String(error),
-			success: false
-		};
+		logger.error(String((error as Error).stack));
+		const toReturn = { message: '', success: false };
+		if (error instanceof postErrors.ErrorPostImageSize) {
+			toReturn.message =
+				'Image size is too large, try reducing the size of the image by splitting your code into multiple code snippets';
+		} else if (error instanceof postErrors.ErrorPostUploadImage) {
+			toReturn.message = 'Failed to upload image, please try again after some time';
+		} else if (error instanceof postErrors.ErrorPostCreate) {
+			toReturn.message = 'Failed to create post, please try again after some time';
+		} else if (error instanceof postErrors.ErrorThreaderInvalidImageTag) {
+			toReturn.message = error.message;
+		} else {
+			const msg = error instanceof Error ? error.message : String(error);
+			toReturn.message = `Encountered error: ${msg}, please try after some time`;
+		}
+		return toReturn;
 	}
 }
-
-// NOTE: This function was used for mocking. Keep it???
-// async function bskyThreads(
-//   pdsURL: string = PDS_URL,
-//   session: SessionData,
-//   text: string,
-//   characterLimit: number = CHARACTER_LIMIT,
-// ): Promise<{ error: boolean; message: string; success: boolean }> {
-//   await new Promise((resolve) => setTimeout(resolve, 5000));
-//   return { error: true, message: "Failed to post", success: false };
-// }
 
 export {
 	createBskyPost,

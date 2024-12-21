@@ -1,5 +1,6 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
+import { PUBLIC_MY_ENV, PUBLIC_BSKY_POST_SUCCESS } from '$env/static/public';
 import fs from 'fs/promises';
 
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -20,6 +21,20 @@ function onlyOneParam(...args: (string | number | boolean | undefined | null)[])
 	}
 }
 
+function checkBoolean(value: unknown) {
+	return typeof value === 'string'
+		? ['true', '1', 'yes', 'y'].includes(value.toLowerCase())
+		: Boolean(value);
+}
+
+function isEnvDev() {
+	return ['development', 'test', 'dev'].includes(PUBLIC_MY_ENV);
+}
+
+function isEnvDevAndPostSuccess() {
+	return isEnvDev() && checkBoolean(PUBLIC_BSKY_POST_SUCCESS);
+}
+
 async function retryFetch(
 	fetchUrl: string,
 	method: FetchMethod,
@@ -31,29 +46,50 @@ async function retryFetch(
 	let retryCount = 0;
 	let lastResponse: Response | undefined = undefined;
 
-	if (retry) {
-		while (retryCount < retryLimit) {
+	// Simulate posting to bsky in development
+	logger.info(`Running in env: ${PUBLIC_MY_ENV}`);
+	if (isEnvDev()) {
+		if (PUBLIC_BSKY_POST_SUCCESS) {
+			logger.info(
+				`Running in dev environment and BSKY_POST_SUCCESS: ${PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
+			);
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			return new Response(JSON.stringify({ message: 'Post created successfully' }), {
+				status: 200,
+				statusText: 'OK'
+			});
+		} else {
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+			logger.info(
+				`Running in dev environment and BSKY_POST_SUCCESS: ${PUBLIC_BSKY_POST_SUCCESS}, simulating failure response`
+			);
+			return new Response(null, { status: 500, statusText: 'Failed to post' });
+		}
+	} else {
+		if (retry) {
+			while (retryCount < retryLimit) {
+				lastResponse = await fetch(fetchUrl, {
+					method: method,
+					headers: headers,
+					body: body
+				});
+				if (!lastResponse.ok) {
+					logger.error(
+						`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`
+					);
+					logger.info(`Retrying in ${retryCount + 1} seconds...`);
+					retryCount++;
+				} else {
+					break;
+				}
+			}
+		} else {
 			lastResponse = await fetch(fetchUrl, {
 				method: method,
 				headers: headers,
 				body: body
 			});
-			if (!lastResponse.ok) {
-				logger.error(
-					`Failed to fetch: status: ${lastResponse.status}, statusText: ${lastResponse.statusText}`
-				);
-				logger.info(`Retrying in ${retryCount + 1} seconds...`);
-				retryCount++;
-			} else {
-				break;
-			}
 		}
-	} else {
-		lastResponse = await fetch(fetchUrl, {
-			method: method,
-			headers: headers,
-			body: body
-		});
 	}
 
 	return lastResponse || new Response(null, { status: 500, statusText: 'Fetch failed' });
@@ -80,4 +116,17 @@ function isNodeError(e: unknown): e is NodeJS.ErrnoException {
 	return e instanceof Error && 'code' in e;
 }
 
-export { onlyOneParam, retryFetch, redirectToLogin, removeFile };
+function createBskyProfileUrl(handle: string) {
+	return `https://bsky.app/profile/${handle}`;
+}
+
+export {
+	onlyOneParam,
+	retryFetch,
+	redirectToLogin,
+	removeFile,
+	createBskyProfileUrl,
+	isEnvDev,
+	isEnvDevAndPostSuccess,
+	checkBoolean
+};
