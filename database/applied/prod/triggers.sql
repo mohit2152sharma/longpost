@@ -15,6 +15,8 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.subscription_status = 'active' THEN
         UPDATE users SET is_subscribed = TRUE where users.id = New.user_id;
+    ELSE 
+        UPDATE users SET is_subscribed = FALSE where users.id = New.user_id;
     END IF;
     RETURN NEW;
 END;

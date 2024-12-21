@@ -1,6 +1,5 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
-// import { PUBLIC_MY_ENV, PUBLIC_BSKY_POST_SUCCESS } from '$env/static/public';
 import { env } from '$env/dynamic/public';
 import fs from 'fs/promises';
 
@@ -30,6 +29,10 @@ function checkBoolean(value: unknown) {
 
 function isEnvDev() {
 	return ['development', 'test', 'dev'].includes(env.PUBLIC_MY_ENV);
+}
+
+function isEnvProd() {
+	return ['production', 'prod'].includes(env.PUBLIC_MY_ENV);
 }
 
 function isEnvDevAndPostSuccess() {
@@ -129,5 +132,6 @@ export {
 	createBskyProfileUrl,
 	isEnvDev,
 	isEnvDevAndPostSuccess,
-	checkBoolean
+	checkBoolean,
+	isEnvProd
 };
