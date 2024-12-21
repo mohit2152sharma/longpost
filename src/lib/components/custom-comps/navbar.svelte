@@ -1,6 +1,5 @@
 <script lang="ts">
 	import AvatarPopover from './avatar-popover.svelte';
-	import { Button } from '$lib/components/ui/button';
 
 	export let isSubscribed: boolean;
 	export let bskyHandle: string;
