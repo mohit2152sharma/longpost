@@ -27,9 +27,10 @@
 	const { form: formData, submitting, enhance } = form;
 	// if isSubscribed is true, then the checkbox should be enabled
 	const enableCheckBox = data.isSubscribed;
+	// const enableCheckBox = true
 </script>
 
-<Navbar bskyHandle={data.bskyHandle} isSubscribed={data.isSubscribed} />
+<Navbar bskyHandle={data.bskyHandle} isSubscribed={enableCheckBox} />
 
 <Toaster />
 <div class="m-4 flex flex-col items-center">

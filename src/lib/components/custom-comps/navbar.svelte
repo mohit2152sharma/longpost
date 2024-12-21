@@ -14,14 +14,11 @@
 				<div class="flex flex-row space-x-2">
 					<div class="text-4xl font-bold"><a href={homeHref}>Longpost</a></div>
 					<div>
-						<button
-							class="dart:text-black rounded border bg-black text-sm text-white dark:bg-white"
-							disabled={isSubscribed}
+						<p
+							class="dart:text-black rounded border bg-black px-1 text-sm text-white dark:bg-white"
 						>
-							<p class="px-1">
-								{#if isSubscribed}plus{:else}<a href="/pricing" target="_blank">upgrade</a>{/if}
-							</p>
-						</button>
+							{#if isSubscribed}plus{:else}<a href="/pricing" target="_blank">upgrade</a>{/if}
+						</p>
 					</div>
 				</div>
 			</div>
