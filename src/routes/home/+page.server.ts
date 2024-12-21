@@ -1,6 +1,6 @@
 import type { PageServerLoad, RequestEvent } from './$types';
 import { zod } from 'sveltekit-superforms/adapters';
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { fail, message, setError, superValidate } from 'sveltekit-superforms';
 import { BskyContentSchema, type SessionData } from '$lib/server/bsky/types';
 import { bskyThreads } from '$lib/server/bsky/posts';
 import { insertPost } from '$lib/server/db/utils';
@@ -9,9 +9,14 @@ import { Logger } from '$lib/logger';
 
 const logger = new Logger();
 
-export const load: PageServerLoad = async () => {
+export const load: PageServerLoad = async (event: RequestEvent) => {
 	const form = await superValidate(zod(BskyContentSchema));
-	return { form };
+	return {
+		form,
+		userId: event.locals.user?.userId,
+		isSubscribed: event.locals.user?.isSubscribed,
+		bskyHandle: event.locals.user?.handle
+	};
 };
 
 export const actions = {
@@ -25,24 +30,23 @@ export const actions = {
 			const sessionData = event.locals.user as SessionData;
 			const response = await bskyThreads('https://bsky.social', sessionData, parsedValues);
 
-			// upload the content to db
-			const post: PostInsert = {
-				postText: parsedValues.content,
-				createdBy: event.locals.user!.userId
-			};
-			try {
-				await insertPost(post);
-			} catch (error) {
-				logger.error(`Failed to insert post: ${post.postText}, with error: ${error}`);
-			}
-
 			if (!response.success) {
-				return fail(502, { form: form, message: response.success });
+				return setError(form, 'content', response.message);
 			} else {
+				const post: PostInsert = {
+					postText: parsedValues.content,
+					createdBy: event.locals.user!.userId
+				};
+				try {
+					await insertPost(post);
+					logger.info(`Post inserted successfully`);
+				} catch (error) {
+					logger.error(`Failed to insert post: ${post.postText}, with error: ${error}`);
+				}
 				return message(form, response.success);
 			}
 		} else {
-			return fail(400, { form });
+			return fail(400, { form, message: `Failed to create a post, please try after some time` });
 		}
 	}
 };

@@ -9,15 +9,15 @@ const skipLoginCheckUrls = ['/login', '/webhooks/stripe'];
 
 const handleAuth: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
-	if (skipLoginCheckUrls.some((url) => pathname.startsWith(url))) {
+	const sessionToken = auth.getSessionTokenCookie(event);
+	if (skipLoginCheckUrls.some((url) => pathname.startsWith(url)) || pathname === "/") {
 		return resolve(event);
 	}
-	const sessionToken = auth.getSessionTokenCookie(event);
 	if (!sessionToken) {
 		event.locals.user = null;
 		const redirectTo = redirectToLogin(event);
 		if (!redirectTo) {
-			throw redirect(302, '/home');
+			throw redirect(302, '/');
 		}
 		throw redirect(302, redirectTo);
 	}

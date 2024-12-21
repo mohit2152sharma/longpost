@@ -1,11 +1,9 @@
 <script lang="ts">
-	import { Button } from '$lib/components/ui/button/index';
 	import * as Card from '$lib/components/ui/card/index';
 	import { Input } from '$lib/components/ui/input/index';
 	import { Label } from '$lib/components/ui/label/index';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from '../../routes/$types';
-	import LoaderCircle from 'lucide-svelte/icons/loader-circle';
 	import type { LoginCredentialsSchemaType } from '$lib/server/bsky/types';
 	import LoadingButton from './custom-comps/loading-button.svelte';
 
@@ -19,7 +17,7 @@
 		<Card.Description>With your Bluesky Handle and App password</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<form method="POST" use:enhance>
+		<form method="POST" use:enhance action="?/login">
 			<div class="grid gap-4">
 				<div class="grid gap-2">
 					<Label for="identifier">Bluesky Handle</Label>
