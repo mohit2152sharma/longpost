@@ -64,7 +64,11 @@ export const actions = {
 			if (!redirectTo || redirectTo === '/') {
 				throw redirect(302, '/home');
 			} else {
-				throw redirect(302, `/${redirectTo.slice(1)}`);
+				if (redirectTo.startsWith('/') && !redirectTo.includes('//')) {
+					throw redirect(302, `/${redirectTo.slice(1)}`);
+				} else {
+					throw redirect(302, '/');
+				}
 			}
 		} else {
 			return fail(400, { form });

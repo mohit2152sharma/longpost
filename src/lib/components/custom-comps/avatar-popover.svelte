@@ -17,7 +17,7 @@
 		<Tooltip.Content class="mr-10 bg-gray-100 text-black">
 			<div class="flex flex-col space-y-4 text-sm">
 				<div class="">
-					<a href={bskyProfileUrl} target="_blank" rel="noreferrer">Bluesky Profile</a>
+					<a href={bskyProfileUrl} target="_blank" rel="noopener noreferrer">Bluesky Profile</a>
 				</div>
 				{#if isSubscribed}
 					<div class="">

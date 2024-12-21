@@ -50,18 +50,11 @@
 					/>
 				</div>
 				<LoadingButton submitting={$submitting} cls="w-full" />
-				<!-- <Button type="submit" class="w-full" variant="default"> -->
-				<!-- 	{#if $submitting} -->
-				<!-- 		<LoaderCircle class="animate-spin" /> -->
-				<!-- 	{:else} -->
-				<!-- 		Login -->
-				<!-- 	{/if} -->
-				<!-- </Button> -->
 			</div>
 		</form>
 		<div class="mt-4 text-center text-sm">
 			Don't have an account?
-			<a target="_blank" rel="noreferrer" href="https://bsky.app" class="underline">
+			<a target="_blank" rel="noopener noreferrer" href="https://bsky.app" class="underline">
 				Sign up on Bluesky
 			</a>
 		</div>
