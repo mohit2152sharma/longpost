@@ -12,9 +12,10 @@ const STRIPE_WEBHOOK_SECRET = checkEnvParam('STRIPE_WEBHOOK_SECRET', true) as st
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 
-export const POST: RequestHandler = async ({ request }) => {
-	let event: Stripe.Event;
+export const POST: RequestHandler = async (event) => {
+	let stripeEvent: Stripe.Event;
 	// Step 1: Get the raw request body as a buffer
+	const request = event.request;
 	const payload = await request.text();
 	const sig = request.headers.get('stripe-signature');
 	try {
@@ -23,13 +24,13 @@ export const POST: RequestHandler = async ({ request }) => {
 			throw new Error('Missing Stripe signature or webhook secret');
 		}
 
-		event = stripe.webhooks.constructEvent(payload, sig, STRIPE_WEBHOOK_SECRET);
+		stripeEvent = stripe.webhooks.constructEvent(payload, sig, STRIPE_WEBHOOK_SECRET);
 
 		// Step 3: Handle the Stripe event
-		switch (event.type) {
+		switch (stripeEvent.type) {
 			case 'customer.subscription.deleted': {
-				logger.info(`Event type: ${event.type}`);
-				const subscription = event.data.object as Stripe.Subscription;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const subscription = stripeEvent.data.object as Stripe.Subscription;
 
 				const subscriptionId = subscription.id;
 				const stripeCustomerId = subscription.customer;
@@ -45,13 +46,14 @@ export const POST: RequestHandler = async ({ request }) => {
 					await updateSubscriber(stripeCustomerId as string, subscriber);
 				} catch (err) {
 					logger.error(`Error updating subscriber: ${err}`);
+					return error(502, `Error updating subscriber: ${err}`);
 				}
 				logger.info(`Subscription cancelled: ${subscriptionId} of customer: ${stripeCustomerId}`);
 				break;
 			}
 			case 'customer.subscription.updated': {
-				logger.info(`Event type: ${event.type}`);
-				const subscription = event.data.object as Stripe.Subscription;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const subscription = stripeEvent.data.object as Stripe.Subscription;
 
 				const subscriber: SubscriptionInsert = {
 					subscriptionId: subscription.id as string,
@@ -70,6 +72,7 @@ export const POST: RequestHandler = async ({ request }) => {
 					await upsertSubscriber(subscriber);
 				} catch (err) {
 					logger.error(`Error updating subscriber: ${err}`);
+					return error(502, `Error updating subscriber: ${err}`);
 				}
 				logger.info(
 					`Subscription updated: ${subscription.id} of customer: ${subscription.customer}`
@@ -77,8 +80,8 @@ export const POST: RequestHandler = async ({ request }) => {
 				break;
 			}
 			case 'checkout.session.completed': {
-				logger.info(`Event type: ${event.type}`);
-				const session = event.data.object as Stripe.Checkout.Session;
+				logger.info(`stripeEvent type: ${stripeEvent.type}`);
+				const session = stripeEvent.data.object as Stripe.Checkout.Session;
 
 				const stripeCustomerId = session.customer as string;
 				const dbCustomerId = session.client_reference_id as string;
@@ -95,12 +98,13 @@ export const POST: RequestHandler = async ({ request }) => {
 					await upsertSubscriber(subscriber);
 				} catch (err) {
 					logger.error(`Error inserting subscriber: ${err}`);
+					return error(502, `Error inserting subscriber: ${err}`);
 				}
 				logger.info(`Checkout session completed: ${session.id}`);
 				break;
 			}
 			default:
-				logger.warn(`Unhandled event type: ${event.type}`);
+				logger.warn(`Unhandled stripeEvent type: ${stripeEvent.type}`);
 		}
 
 		// Step 4: Respond with success

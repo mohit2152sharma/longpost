@@ -1,7 +1,6 @@
 CREATE TABLE subscriptions (
-    id SERIAL PRIMARY KEY,
+    stripe_customer_id TEXT NOT NULL UNIQUE PRIMARY KEY,
     user_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    stripe_customer_id TEXT NOT NULL UNIQUE,
     subscription_id TEXT NOT NULL UNIQUE,
     subscription_status TEXT NOT NULL DEFAULT 'inactive',
     subscription_end_date INTEGER,
@@ -47,11 +46,19 @@ CREATE TABLE subscriptions (
     cancel_at_period_end BOOLEAN NOT NULL DEFAULT FALSE,
     amount NUMERIC,
     currency TEXT,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
+    updated_at TIMESTAMP NOT NULL DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 );
 
+-- Create a trigger to automatically set the updated_at column
 CREATE TRIGGER trigger_set_updated_at
 BEFORE UPDATE ON subscriptions
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
+
+-- Create a trigger to set the is_subscribed column in the users table when changed to active
+CREATE TRIGGER trigger_set_is_subscribed
+AFTER UPDATE OF subscription_status ON subscriptions
+FOR EACH ROW
+EXECUTE FUNCTION set_is_subscribed();
+

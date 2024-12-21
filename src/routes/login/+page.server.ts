@@ -1,5 +1,5 @@
 import type { RequestEvent } from './$types';
-import { fail, superValidate } from 'sveltekit-superforms';
+import { fail, setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { LoginCredentialsSchema, type SessionData } from '$lib/server/bsky/types';
 import { bskyLogin } from '$lib/server/bsky/auth';
@@ -27,7 +27,9 @@ export const actions = {
 
 			if (!response) {
 				logger.error(`Login failed for user: ${credentials.identifier}`);
-				return fail(400, { form: form, message: 'Invalid Credentials' });
+				const errorMsg = 'Invalid handle or password';
+				setError(form, 'password', errorMsg);
+				return setError(form, 'identifier', errorMsg);
 			}
 
 			const token: SessionData = {

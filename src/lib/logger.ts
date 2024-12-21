@@ -34,7 +34,8 @@ export class Logger {
 
 	getLogLevel(level?: string | LogLevel) {
 		if (!level) {
-			// check if LOG_LEVEL is set in environment
+			// TODO: vite throws warning Module "path" has been externalized for browser
+			// Avoid nodejs modules to reduce bundle size
 			level = typeof window === 'undefined' ? env.PUBLIC_LOG_LEVEL : env.PUBLIC_LOG_LEVEL;
 			if (!level) {
 				return LogLevel.INFO;
