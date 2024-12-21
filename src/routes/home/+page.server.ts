@@ -6,16 +6,23 @@ import { bskyThreads } from '$lib/server/bsky/posts';
 import { insertPost } from '$lib/server/db/utils';
 import type { PostInsert } from '$lib/server/db/schema';
 import { Logger } from '$lib/logger';
+import { redirect } from '@sveltejs/kit';
 
 const logger = new Logger();
 
 export const load: PageServerLoad = async (event: RequestEvent) => {
-	const form = await superValidate(zod(BskyContentSchema));
-	return {
-		form,
-		userId: event.locals.user?.userId,
-		isSubscribed: event.locals.user?.isSubscribed,
-		bskyHandle: event.locals.user?.handle
+	const user = event.locals.user
+	if (!user) {
+		logger.info('User is not logged in, redirecting to login page')
+		throw redirect(302, '/login')
+	} else {
+		const form = await superValidate(zod(BskyContentSchema));
+		return {
+			form,
+			userId: user.userId,
+			isSubscribed: user.isSubscribed,
+			bskyHandle: user.handle
+		}
 	};
 };
 
