@@ -7,7 +7,9 @@ import type { SubscriptionInsert } from '$lib/server/db/schema';
 import { isEnvProd } from '$lib/lib-utils';
 
 function createErrorMsg(error: Error): string {
-	return isEnvProd() ? `Error processing webhook, error message: ${error.message}` : `Error processing webhook, error stack: ${error.stack}`;
+	return isEnvProd()
+		? `Error processing webhook, error message: ${error.message}`
+		: `Error processing webhook, error stack: ${error.stack}`;
 }
 
 const logger = new Logger();

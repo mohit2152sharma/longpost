@@ -18,7 +18,7 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	} else {
 		const form = await superValidate(zod(BskyContentSchema));
 		// check if user is subscribed
-		const isSubscribed = await checkSubscription(user.userId)
+		const isSubscribed = await checkSubscription(user.userId);
 
 		return {
 			form,
