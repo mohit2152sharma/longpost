@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { env } from '$env/dynamic/private';
+import { isEnvDev, isEnvProd } from '$lib/lib-utils';
 
 export function checkEnvParam(
 	variableName: string,
@@ -37,16 +38,21 @@ export function getDbConfig(
 	return { username: _username, password: _password, host: _host, port: _port, dbName: _dbName };
 }
 
-let databaseUrl: string;
-if (env.MY_ENV === 'development' || env.MY_ENV === 'test' || env.MY_ENV == 'dev') {
-	databaseUrl = 'postgres://postgres@localhost:5432/longpost';
-} else if (env.MY_ENV == 'prod' || env.MY_ENV == 'production') {
+function getDatabaseUrl(): string {
 	if (!env.DATABASE_URL) {
 		const dbConfig = getDbConfig();
 		databaseUrl = `postgres://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.dbName}`;
 	} else {
 		databaseUrl = env.DATABASE_URL;
-	}
+	} 
+	return databaseUrl;
+}
+
+let databaseUrl: string;
+if (env.MY_ENV === 'local') {
+	databaseUrl = 'postgres://postgres@localhost:5432/longpost';
+} else if (isEnvProd() || isEnvDev()) {
+	databaseUrl = getDatabaseUrl()
 } else {
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
 }
