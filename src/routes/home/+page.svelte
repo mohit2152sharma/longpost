@@ -10,6 +10,7 @@
 	import Navbar from '$lib/components/custom-comps/navbar.svelte';
 	import { toast } from 'svelte-sonner';
 	import { Toaster } from '$lib/components/ui/sonner';
+	import { Button } from '$lib/components/ui/button';
 
 	export let data: PageData & {
 		userId: string;
@@ -37,7 +38,7 @@
 	<form method="POST" class="flex w-1/2 flex-col gap-4 space-y-4" use:enhance>
 		<Form.Field {form} name="content">
 			<Form.Control>
-				<Form.Label class="text-3xl font-bold">Post text</Form.Label>
+				<Form.Label class="text-3xl font-bold">Post Threads</Form.Label>
 				<Textarea
 					class="h-[50vh]"
 					placeholder="What's on your mind?"
@@ -128,6 +129,12 @@
 				<li>
 					You can have as many code snippets as you want. If there are more than four code snippets
 					in a post, rest of the code snippets will be pushed over to next post.
+				</li>
+				<li>
+					For bugs and feature requests, please open a <Button
+						size="sm"
+						href="https://github.com/mohit2152sharma/longpost/issues">Pull Request</Button
+					>
 				</li>
 			</ul>
 		</div>

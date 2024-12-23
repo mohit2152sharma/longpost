@@ -2,11 +2,11 @@
 	import { Button } from '$lib/components/ui/button';
 </script>
 
-<div class="flex h-screen flex-col items-center justify-center space-y-6">
+<div class="flex h-[90vh] flex-col items-center justify-center space-y-6">
 	<div class="flex flex-col items-center space-y-4">
 		<h1 class="text-9xl font-bold underline">Longpost</h1>
 		<div>
-			<p class="text-xl italic">Post your long thoughts without distraction on bluesky</p>
+			<p class="text-xl italic">Post your code snippets without distraction on bluesky</p>
 		</div>
 	</div>
 	<div class="text-sm italic">
