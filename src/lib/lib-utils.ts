@@ -1,8 +1,8 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
 import { env as publicEnv } from '$env/dynamic/public';
-import { env as privateEnv } from '$env/dynamic/private';
 import fs from 'fs/promises';
+import { DEV_ENVS, PROD_ENVS } from './constants';
 
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 const logger = new Logger();
@@ -29,13 +29,11 @@ function checkBoolean(value: unknown) {
 }
 
 function isEnvDev() {
-	const array = ['development', 'test', 'dev'];
-	return array.includes(publicEnv.PUBLIC_MY_ENV)  || array.includes(privateEnv.MY_ENV);
+	return DEV_ENVS.includes(publicEnv.PUBLIC_MY_ENV)
 }
 
 function isEnvProd() {
-	const array = ['production', 'prod'];
-	return array.includes(publicEnv.PUBLIC_MY_ENV) || array.includes(privateEnv.MY_ENV);
+	return PROD_ENVS.includes(publicEnv.PUBLIC_MY_ENV) 
 }
 
 function isEnvDevAndPostSuccess() {

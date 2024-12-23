@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { env } from '$env/dynamic/private';
-import { isEnvDev, isEnvProd } from '$lib/lib-utils';
+import { DEV_ENVS, PROD_ENVS } from '$lib/constants';
 
 export function checkEnvParam(
 	variableName: string,
@@ -51,7 +51,7 @@ function getDatabaseUrl(): string {
 let databaseUrl: string;
 if (env.MY_ENV === 'local') {
 	databaseUrl = 'postgres://postgres@localhost:5432/longpost';
-} else if (isEnvProd() || isEnvDev()) {
+} else if (PROD_ENVS.concat(DEV_ENVS).includes(env.MY_ENV)) {
 	databaseUrl = getDatabaseUrl()
 } else {
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
