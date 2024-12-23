@@ -11,3 +11,4 @@ export const PRICING_TABLE_ID_PROD = 'abc';
 export const PRICING_TABLE_PUBLISHABLE_KEY_DEV =
 	'pk_test_51QV9Y4SHacannOAHx9HxPgZr1xQE0iMd9qgBuYumXcKyTZvzMqGBIFmGmpf1rcfcJImr2kx4pdcPI4i09bwExvFX00ixuYVEhp';
 export const PRICING_TABLE_PUBLISHABLE_KEY_PROD = 'abc';
+export const SHOUTOUT_MESSAGE = `This thread was created by Longpost. Try it out at: https://longpost.in`;

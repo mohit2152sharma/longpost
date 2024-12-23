@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Avatar from './avatar.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-	import { env } from '$env/dynamic/public';
+	// import { env } from '$env/dynamic/public';
 	import { createBskyProfileUrl } from '$lib/lib-utils';
 
 	export let bskyHandle: string;
@@ -19,11 +19,12 @@
 				<div class="">
 					<a href={bskyProfileUrl} target="_blank" rel="noopener noreferrer">Bluesky Profile</a>
 				</div>
-				{#if isSubscribed}
-					<div class="">
-						<a href={env.PUBLIC_STRIPE_CONSOLE_URL} target="_blank">Billing</a>
-					</div>
-				{/if}
+				<!-- TODO: Enable billing page when Stripe is working -->
+				<!-- {#if isSubscribed} -->
+				<!-- 	<div class=""> -->
+				<!-- 		<a href={env.PUBLIC_STRIPE_CONSOLE_URL} target="_blank">Billing</a> -->
+				<!-- 	</div> -->
+				<!-- {/if} -->
 				<!-- TODO: Enable help page when enough content is there -->
 				<!-- <div> -->
 				<!-- 	<a href="/help" target="_blank">Help</a> -->

@@ -4,6 +4,7 @@ import os from 'os';
 import path from 'path';
 import { ErrorThreaderInvalidImageTag } from './post-errors';
 import { Logger } from '$lib/logger';
+import { SHOUTOUT_MESSAGE } from '$lib/constants';
 
 const logger = new Logger();
 
@@ -28,7 +29,7 @@ async function addCounter(posts: Array<Post>, threadLength: number, characterLim
 async function addShoutout(posts: Array<Post>, shoutout: boolean, shoutoutMessage?: string) {
 	if (shoutout) {
 		if (!shoutoutMessage) {
-			shoutoutMessage = `This thread was created by Longpost. Try it out at: https:/www.longpost.in`;
+			shoutoutMessage = SHOUTOUT_MESSAGE;
 		}
 		posts.push({ text: shoutoutMessage });
 	}
