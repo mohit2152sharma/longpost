@@ -30,16 +30,16 @@ function checkBoolean(value: unknown) {
 
 function isEnvDev() {
 	const array = ['development', 'test', 'dev'];
-	return array.includes(privateEnv.PUBLIC_MY_ENV)  || array.includes(publicEnv.MY_ENV);
+	return array.includes(publicEnv.PUBLIC_MY_ENV)  || array.includes(privateEnv.MY_ENV);
 }
 
 function isEnvProd() {
 	const array = ['production', 'prod'];
-	return array.includes(privateEnv.PUBLIC_MY_ENV) || array.includes(publicEnv.MY_ENV);
+	return array.includes(publicEnv.PUBLIC_MY_ENV) || array.includes(privateEnv.MY_ENV);
 }
 
 function isEnvDevAndPostSuccess() {
-	return isEnvDev() && checkBoolean(privateEnv.PUBLIC_BSKY_POST_SUCCESS);
+	return isEnvDev() && checkBoolean(publicEnv.PUBLIC_BSKY_POST_SUCCESS);
 }
 
 async function retryFetch(
