@@ -1,7 +1,7 @@
 <script lang="ts">
-	export let width: number 
-	export let height: number
-	export let href: string
+	export let width: number;
+	export let height: number;
+	export let href: string;
 </script>
 
 <a {href} target="_blank" rel="noopener noreferrer" aria-label="Github">

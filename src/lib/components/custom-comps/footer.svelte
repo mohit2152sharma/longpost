@@ -1,8 +1,8 @@
 <script lang="ts">
- import BlueskyIcon from './bluesky-icon.svelte'
- import { BLUESKY_LOGO_HREF } from '$lib/constants'
- import GithubIcon from './github-icon.svelte'
- import { GITHUB_LOGO_HREF } from '$lib/constants'
+	import BlueskyIcon from './bluesky-icon.svelte';
+	import { BLUESKY_LOGO_HREF } from '$lib/constants';
+	import GithubIcon from './github-icon.svelte';
+	import { GITHUB_LOGO_HREF } from '$lib/constants';
 </script>
 
 <footer id="footer">

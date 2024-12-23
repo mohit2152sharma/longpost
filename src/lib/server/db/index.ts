@@ -44,7 +44,7 @@ function getDatabaseUrl(): string {
 		databaseUrl = `postgres://${dbConfig.username}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.dbName}`;
 	} else {
 		databaseUrl = env.DATABASE_URL;
-	} 
+	}
 	return databaseUrl;
 }
 
@@ -52,7 +52,7 @@ let databaseUrl: string;
 if (env.MY_ENV === 'local') {
 	databaseUrl = 'postgres://postgres@localhost:5432/longpost';
 } else if (PROD_ENVS.concat(DEV_ENVS).includes(env.MY_ENV)) {
-	databaseUrl = getDatabaseUrl()
+	databaseUrl = getDatabaseUrl();
 } else {
 	throw new Error(`Environment not provided or unknown environment: ${env.MY_ENV}`);
 }

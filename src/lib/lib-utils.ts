@@ -30,11 +30,11 @@ function checkBoolean(value: unknown) {
 
 // TODO: May be use switch/case statment?
 function isEnvDev() {
-	return DEV_ENVS.includes(publicEnv.PUBLIC_MY_ENV)
+	return DEV_ENVS.includes(publicEnv.PUBLIC_MY_ENV);
 }
 
 function isEnvProd() {
-	return PROD_ENVS.includes(publicEnv.PUBLIC_MY_ENV) 
+	return PROD_ENVS.includes(publicEnv.PUBLIC_MY_ENV);
 }
 
 function isEnvLocal() {
