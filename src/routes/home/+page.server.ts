@@ -3,8 +3,8 @@ import { zod } from 'sveltekit-superforms/adapters';
 import { fail, message, setError, superValidate } from 'sveltekit-superforms';
 import { BskyContentSchema, type SessionData } from '$lib/server/bsky/types';
 import { bskyThreads } from '$lib/server/bsky/posts';
-import { checkSubscription, insertPost } from '$lib/server/db/utils';
-import type { PostInsert } from '$lib/server/db/schema';
+// import { checkSubscription, insertPost } from '$lib/server/db/utils';
+// import type { PostInsert } from '$lib/server/db/schema';
 import { Logger } from '$lib/logger';
 import { redirect } from '@sveltejs/kit';
 
