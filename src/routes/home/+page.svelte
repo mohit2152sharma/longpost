@@ -28,7 +28,6 @@
 	const { form: formData, submitting, enhance } = form;
 	// if isSubscribed is true, then the checkbox should be enabled
 	const enableCheckBox = data.isSubscribed;
-	// const enableCheckBox = true
 </script>
 
 <Navbar bskyHandle={data.bskyHandle} isSubscribed={enableCheckBox} />
@@ -49,40 +48,47 @@
 			<Form.Description></Form.Description>
 			<Form.FieldErrors />
 		</Form.Field>
-		<div class="flex flex-row items-center space-x-3">
-			<LoadingButton buttonTitle="Post" submitting={$submitting} />
-			<Form.Field {form} name="shoutout">
-				<Form.Control>
-					{#if enableCheckBox}
-						<div class="flex flex-row items-center space-x-2">
-							<Checkbox id="shoutout" name="shoutout" bind:checked={$formData.shoutout} />
-							<Form.Label class="text-sm font-light italic"
-								>Add "created by Longpost" to the end of your post</Form.Label
-							>
-						</div>
-					{:else}
-						<div class="flex flex-row items-center">
-							<Tooltip.Provider>
-								<Tooltip.Root>
-									<Tooltip.Trigger>
-										<div class="flex flex-row items-center space-x-2">
-											<Checkbox id="shoutout" name="shoutout" checked disabled />
-											<Form.Label class="text-sm font-light italic"
-												>Add "created by Longpost" to the end of your post</Form.Label
-											>
-										</div>
-									</Tooltip.Trigger>
-									<Tooltip.Content>
-										<p>
-											<a href="/pricing" target="_blank">Upgrade to remove Longpost branding</a>
-										</p>
-									</Tooltip.Content>
-								</Tooltip.Root>
-							</Tooltip.Provider>
-						</div>
-					{/if}
-				</Form.Control>
-			</Form.Field>
+		<div class="flex flex-row justify-between">
+			<div class="flex flex-row items-center space-x-3">
+				<LoadingButton buttonTitle="Post" submitting={$submitting} />
+				<Form.Field {form} name="shoutout">
+					<Form.Control>
+						{#if enableCheckBox}
+							<div class="flex flex-row items-center space-x-2">
+								<Checkbox id="shoutout" name="shoutout" bind:checked={$formData.shoutout} />
+								<Form.Label class="text-sm font-light italic"
+									>Add "created by Longpost" to the end of your post</Form.Label
+								>
+							</div>
+						{:else}
+							<div class="flex flex-row items-center">
+								<Tooltip.Provider>
+									<Tooltip.Root>
+										<Tooltip.Trigger>
+											<div class="flex flex-row items-center space-x-2">
+												<Checkbox id="shoutout" name="shoutout" checked disabled />
+												<Form.Label class="text-sm font-light italic"
+													>Add "created by Longpost" to the end of your post</Form.Label
+												>
+											</div>
+										</Tooltip.Trigger>
+										<Tooltip.Content>
+											<p>
+												<a href="/pricing" target="_blank">Upgrade to remove Longpost branding</a>
+											</p>
+										</Tooltip.Content>
+									</Tooltip.Root>
+								</Tooltip.Provider>
+							</div>
+						{/if}
+					</Form.Control>
+				</Form.Field>
+			</div>
+			<div>
+				<Button class="bg-red-400" href="https://ko-fi.com/montepy"
+					>Support feature development</Button
+				>
+			</div>
 		</div>
 	</form>
 </div>

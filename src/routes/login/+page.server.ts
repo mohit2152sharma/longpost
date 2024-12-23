@@ -6,8 +6,8 @@ import { bskyLogin } from '$lib/server/bsky/auth';
 import { redirect } from '@sveltejs/kit';
 import { deleteSessionTokenCookie, setSessionTokenCookie } from '$lib/server/auth';
 import { Logger } from '$lib/logger';
-import { type UserInsert } from '$lib/server/db/schema';
-import { checkAndInsertNewUser } from '$lib/server/db/utils';
+// import { type UserInsert } from '$lib/server/db/schema';
+// import { checkAndInsertNewUser } from '$lib/server/db/utils';
 
 const logger = new Logger();
 
@@ -41,24 +41,25 @@ export const actions = {
 				isSubscribed: false
 			};
 
+			// TODO: Disabling user insert as Stripe doesn't work in India
 			// set user data in database
-			const user: UserInsert = {
-				did: response.did,
-				email: response.email,
-				handle: response.handle,
-				isSubscribed: false
-			};
-
-			try {
-				const userFromDb = await checkAndInsertNewUser(user);
-				if (!userFromDb?.length) {
-					throw new Error('Failed to insert user');
-				}
-				token.userId = userFromDb[0].id;
-				token.isSubscribed = userFromDb[0].isSubscribed;
-			} catch (error) {
-				logger.error(`Failed to insert user: ${user.handle}, with error: ${error}`);
-			}
+			// const user: UserInsert = {
+			// 	did: response.did,
+			// 	email: response.email,
+			// 	handle: response.handle,
+			// 	isSubscribed: false
+			// };
+			//
+			// try {
+			// 	const userFromDb = await checkAndInsertNewUser(user);
+			// 	if (!userFromDb?.length) {
+			// 		throw new Error('Failed to insert user');
+			// 	}
+			// 	token.userId = userFromDb[0].id;
+			// 	token.isSubscribed = userFromDb[0].isSubscribed;
+			// } catch (error) {
+			// 	logger.error(`Failed to insert user: ${user.handle}, with error: ${error}`);
+			// }
 
 			setSessionTokenCookie(event, JSON.stringify(token));
 			const redirectTo = event.url.searchParams.get('redirectTo');
