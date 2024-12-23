@@ -23,6 +23,7 @@
 				</div>
 			</div>
 		</div>
+
 		{#if bskyHandle}
 			<div class="flex flex-row items-center space-x-4">
 				<AvatarPopover {bskyHandle} {isSubscribed} />
