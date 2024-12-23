@@ -18,12 +18,13 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 	} else {
 		const form = await superValidate(zod(BskyContentSchema));
 		// check if user is subscribed
-		const isSubscribed = await checkSubscription(user.userId);
+		// TODO: Disabling subscription check as Stripe doesn't work in India
+		// const isSubscribed = await checkSubscription(user.userId);
 
 		return {
 			form,
 			userId: user.userId,
-			isSubscribed: isSubscribed,
+			isSubscribed: true,
 			bskyHandle: user.handle
 		};
 	}
@@ -43,16 +44,17 @@ export const actions = {
 			if (!response.success) {
 				return setError(form, 'content', response.message);
 			} else {
-				const post: PostInsert = {
-					postText: parsedValues.content,
-					createdBy: event.locals.user!.userId
-				};
-				try {
-					await insertPost(post);
-					logger.info(`Post inserted successfully`);
-				} catch (error) {
-					logger.error(`Failed to insert post: ${post.postText}, with error: ${error}`);
-				}
+				// TODO: Disabling post insert as Stripe doesn't work in India
+				// const post: PostInsert = {
+				// 	postText: parsedValues.content,
+				// 	createdBy: event.locals.user!.userId
+				// };
+				// try {
+				// 	await insertPost(post);
+				// 	logger.info(`Post inserted successfully`);
+				// } catch (error) {
+				// 	logger.error(`Failed to insert post: ${post.postText}, with error: ${error}`);
+				// }
 				return message(form, response.success);
 			}
 		} else {
