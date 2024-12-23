@@ -1,6 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
-import { env } from '$env/dynamic/public';
+import { env as publicEnv } from '$env/dynamic/public';
+import { env as privateEnv } from '$env/dynamic/private';
 import fs from 'fs/promises';
 
 type FetchMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -28,15 +29,17 @@ function checkBoolean(value: unknown) {
 }
 
 function isEnvDev() {
-	return ['development', 'test', 'dev'].includes(env.PUBLIC_MY_ENV);
+	const array = ['development', 'test', 'dev'];
+	return array.includes(privateEnv.PUBLIC_MY_ENV)  || array.includes(publicEnv.MY_ENV);
 }
 
 function isEnvProd() {
-	return ['production', 'prod'].includes(env.PUBLIC_MY_ENV);
+	const array = ['production', 'prod'];
+	return array.includes(privateEnv.PUBLIC_MY_ENV) || array.includes(publicEnv.MY_ENV);
 }
 
 function isEnvDevAndPostSuccess() {
-	return isEnvDev() && checkBoolean(env.PUBLIC_BSKY_POST_SUCCESS);
+	return isEnvDev() && checkBoolean(privateEnv.PUBLIC_BSKY_POST_SUCCESS);
 }
 
 async function retryFetch(
@@ -51,11 +54,11 @@ async function retryFetch(
 	let lastResponse: Response | undefined = undefined;
 
 	// Simulate posting to bsky in development
-	logger.info(`Running in env: ${env.PUBLIC_MY_ENV}`);
+	logger.info(`Running in env: ${privateEnv.PUBLIC_MY_ENV}`);
 	if (isEnvDev()) {
-		if (env.PUBLIC_BSKY_POST_SUCCESS) {
+		if (privateEnv.PUBLIC_BSKY_POST_SUCCESS) {
 			logger.info(
-				`Running in dev environment and BSKY_POST_SUCCESS: ${env.PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
+				`Running in dev environment and BSKY_POST_SUCCESS: ${privateEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
 			);
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			return new Response(JSON.stringify({ message: 'Post created successfully' }), {
@@ -65,7 +68,7 @@ async function retryFetch(
 		} else {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			logger.info(
-				`Running in dev environment and BSKY_POST_SUCCESS: ${env.PUBLIC_BSKY_POST_SUCCESS}, simulating failure response`
+				`Running in dev environment and BSKY_POST_SUCCESS: ${privateEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating failure response`
 			);
 			return new Response(null, { status: 500, statusText: 'Failed to post' });
 		}
