@@ -28,12 +28,17 @@ function checkBoolean(value: unknown) {
 		: Boolean(value);
 }
 
+// TODO: May be use switch/case statment?
 function isEnvDev() {
 	return DEV_ENVS.includes(publicEnv.PUBLIC_MY_ENV)
 }
 
 function isEnvProd() {
 	return PROD_ENVS.includes(publicEnv.PUBLIC_MY_ENV) 
+}
+
+function isEnvLocal() {
+	return publicEnv.PUBLIC_MY_ENV === 'local';
 }
 
 function isEnvDevAndPostSuccess() {
@@ -53,7 +58,7 @@ async function retryFetch(
 
 	// Simulate posting to bsky in development
 	logger.info(`Running in env: ${publicEnv.PUBLIC_MY_ENV}`);
-	if (isEnvDev()) {
+	if (isEnvLocal()) {
 		if (publicEnv.PUBLIC_BSKY_POST_SUCCESS) {
 			logger.info(
 				`Running in dev environment and BSKY_POST_SUCCESS: ${publicEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
