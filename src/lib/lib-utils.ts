@@ -54,11 +54,11 @@ async function retryFetch(
 	let lastResponse: Response | undefined = undefined;
 
 	// Simulate posting to bsky in development
-	logger.info(`Running in env: ${privateEnv.PUBLIC_MY_ENV}`);
+	logger.info(`Running in env: ${publicEnv.PUBLIC_MY_ENV}`);
 	if (isEnvDev()) {
-		if (privateEnv.PUBLIC_BSKY_POST_SUCCESS) {
+		if (publicEnv.PUBLIC_BSKY_POST_SUCCESS) {
 			logger.info(
-				`Running in dev environment and BSKY_POST_SUCCESS: ${privateEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
+				`Running in dev environment and BSKY_POST_SUCCESS: ${publicEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating success response`
 			);
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			return new Response(JSON.stringify({ message: 'Post created successfully' }), {
@@ -68,7 +68,7 @@ async function retryFetch(
 		} else {
 			await new Promise((resolve) => setTimeout(resolve, 2000));
 			logger.info(
-				`Running in dev environment and BSKY_POST_SUCCESS: ${privateEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating failure response`
+				`Running in dev environment and BSKY_POST_SUCCESS: ${publicEnv.PUBLIC_BSKY_POST_SUCCESS}, simulating failure response`
 			);
 			return new Response(null, { status: 500, statusText: 'Failed to post' });
 		}
