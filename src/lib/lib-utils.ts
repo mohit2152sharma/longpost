@@ -1,6 +1,7 @@
 import type { RequestEvent } from '@sveltejs/kit';
 import { Logger } from './logger';
 import { env as publicEnv } from '$env/dynamic/public';
+import { OpenPanel } from '@openpanel/web';
 import fs from 'fs/promises';
 import { DEV_ENVS, PROD_ENVS } from './constants';
 
@@ -130,6 +131,13 @@ function createBskyProfileUrl(handle: string) {
 	return `https://bsky.app/profile/${handle}`;
 }
 
+const openPanel = new OpenPanel({
+	clientId: '4f181cea-4039-4397-8cee-54b5612e8463',
+	trackScreenViews: true,
+	trackOutgoingLinks: true,
+	trackAttributes: true
+});
+
 export {
 	onlyOneParam,
 	retryFetch,
@@ -139,5 +147,6 @@ export {
 	isEnvDev,
 	isEnvDevAndPostSuccess,
 	checkBoolean,
-	isEnvProd
+	isEnvProd,
+	openPanel
 };

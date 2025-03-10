@@ -1,10 +1,9 @@
 <script lang="ts">
 	import '../app.css';
 	let { children } = $props();
-	import Analytics from '$lib/components/custom-comps/analytics.svelte';
-	import { GOOGLE_MEASUREMENT_ID } from '$lib/constants';
 	import Footer from '$lib/components/custom-comps/footer.svelte';
 	import { onMount } from 'svelte';
+	import OpenPanel from '$lib/components/custom-comps/open-panel.svelte';
 
 	onMount(() => {
 		const footer = document.getElementById('footer');
@@ -14,7 +13,7 @@
 	});
 </script>
 
-<Analytics measurementId={GOOGLE_MEASUREMENT_ID} />
+<OpenPanel />
 <div class="flex flex-col justify-end">
 	{@render children()}
 	<Footer />

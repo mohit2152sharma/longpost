@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
+	import { openPanel as op } from '$lib/lib-utils';
 </script>
 
 <div class="flex h-[90vh] flex-col items-center justify-center space-y-6">
@@ -19,7 +20,12 @@
 	</div>
 	<div class="">
 		<form method="POST">
-			<Button id="get-started-button" type="submit">Get Started</Button>
+			<Button
+				id="get-started-button"
+				type="submit"
+				onclick={() => op.track('button_clicked', { button_name: 'get-started-button' })}
+				>Get Started</Button
+			>
 		</form>
 	</div>
 </div>

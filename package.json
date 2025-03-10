@@ -58,6 +58,7 @@
 	"dependencies": {
 		"@atproto/api": "^0.13.18",
 		"@node-rs/argon2": "^1.1.0",
+		"@openpanel/web": "^1.0.1",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@tailwindcss/container-queries": "^0.1.1",
