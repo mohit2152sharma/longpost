@@ -13,7 +13,11 @@ export const posthogConfig = <PostHogConfig>{
 
 export function posthogInit() {
 	if (browser) {
-		posthog.init(POSTHOG_PROJECT_KEY, posthogConfig);
+		if (!POSTHOG_PROJECT_KEY) {
+			console.error('cannot find posthog key');
+		} else {
+			posthog.init(POSTHOG_PROJECT_KEY, posthogConfig);
+		}
 	}
 }
 
