@@ -11,6 +11,9 @@
 	import { toast } from 'svelte-sonner';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { Button } from '$lib/components/ui/button';
+	import { openPanel as op } from '$lib/lib-utils';
+	import type { ButtonEvent } from '$lib/types/events';
+	import { page } from '$app/stores';
 
 	export let data: PageData & {
 		userId: string;
@@ -28,6 +31,36 @@
 	const { form: formData, submitting, enhance } = form;
 	// if isSubscribed is true, then the checkbox should be enabled
 	const enableCheckBox = data.isSubscribed;
+
+	const postButtonClicked: ButtonEvent = {
+		event_name: 'post_button_clicked',
+		event_props: {
+			button_name: 'post',
+			button_title: 'Post',
+			button_page_name: $page.url.pathname,
+			button_page_url: $page.url.toString()
+		}
+	};
+
+	const supportButtonClicked: ButtonEvent = {
+		event_name: 'support_button_clicked',
+		event_props: {
+			button_name: 'support',
+			button_title: 'Support',
+			button_page_name: $page.url.pathname,
+			button_page_url: $page.url.toString()
+		}
+	};
+
+	const checkBoxClicked: ButtonEvent = {
+		event_name: 'checkbox_button_clicked',
+		event_props: {
+			button_name: 'checkbox',
+			button_title: 'Checkbox',
+			button_page_name: $page.url.pathname,
+			button_page_url: $page.url.toString()
+		}
+	};
 </script>
 
 <Navbar bskyHandle={data.bskyHandle} isSubscribed={enableCheckBox} />
@@ -50,12 +83,21 @@
 		</Form.Field>
 		<div class="flex flex-row justify-between">
 			<div class="flex flex-row items-center space-x-3">
-				<LoadingButton buttonTitle="Post" submitting={$submitting} />
+				<LoadingButton
+					buttonTitle="Post"
+					submitting={$submitting}
+					onclick={() => op.track(postButtonClicked.event_name, postButtonClicked.event_props)}
+				/>
 				<Form.Field {form} name="shoutout">
 					<Form.Control>
 						{#if enableCheckBox}
 							<div class="flex flex-row items-center space-x-2">
-								<Checkbox id="shoutout" name="shoutout" bind:checked={$formData.shoutout} />
+								<Checkbox
+									id="shoutout"
+									name="shoutout"
+									bind:checked={$formData.shoutout}
+									onclick={() => op.track(checkBoxClicked.event_name, checkBoxClicked.event_props)}
+								/>
 								<Form.Label class="text-sm font-light italic"
 									>Add "created by Longpost" to the end of your post</Form.Label
 								>
@@ -85,7 +127,11 @@
 				</Form.Field>
 			</div>
 			<div>
-				<Button class="bg-red-400" href="https://ko-fi.com/montepy"
+				<Button
+					class="bg-red-400"
+					href="https://ko-fi.com/montepy"
+					onclick={() =>
+						op.track(supportButtonClicked.event_name, supportButtonClicked.event_props)}
 					>Support feature development</Button
 				>
 			</div>
