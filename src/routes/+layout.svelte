@@ -3,6 +3,8 @@
 	let { children } = $props();
 	import Footer from '$lib/components/custom-comps/footer.svelte';
 	import { onMount } from 'svelte';
+	import { setupPageCaptureEvent } from '$lib/analytics';
+	setupPageCaptureEvent();
 
 	onMount(() => {
 		const footer = document.getElementById('footer');
