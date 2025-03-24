@@ -140,7 +140,8 @@
 				<Button
 					class="bg-red-400"
 					href="https://ko-fi.com/montepy"
-					onclick={() => op.track('support-button', supportButtonClicked)}
+					onclick={() =>
+						op.track(supportButtonClicked.event_name, supportButtonClicked.event_props)}
 					>Support feature development</Button
 				>
 			</div>
