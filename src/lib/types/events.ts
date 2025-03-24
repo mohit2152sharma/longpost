@@ -1,6 +1,7 @@
-export type Event<T> = {
+export type Event<T, R> = {
 	event_name: string;
 	event_props: T;
+	__identify?: R;
 };
 
 export type ButtonEventProps = {
@@ -10,4 +11,8 @@ export type ButtonEventProps = {
 	button_page_url: string;
 };
 
-export type ButtonEvent = Event<ButtonEventProps>;
+export type Identify = {
+	profileId: string;
+};
+
+export type ButtonEvent = Event<ButtonEventProps, Identify>;

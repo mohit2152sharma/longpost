@@ -24,6 +24,7 @@ export const load: PageServerLoad = async (event: RequestEvent) => {
 		return {
 			form,
 			userId: user.userId,
+			userDid: user.did,
 			isSubscribed: true,
 			bskyHandle: user.handle
 		};

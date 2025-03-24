@@ -17,6 +17,7 @@
 
 	export let data: PageData & {
 		userId: string;
+		did: string;
 		isSubscribed: boolean;
 		bskyHandle: string;
 		form: BskyContentSchemaType;
@@ -34,6 +35,9 @@
 
 	const postButtonClicked: ButtonEvent = {
 		event_name: 'post_button_clicked',
+		__identify: {
+			profileId: data.did
+		},
 		event_props: {
 			button_name: 'post',
 			button_title: 'Post',
@@ -44,6 +48,9 @@
 
 	const supportButtonClicked: ButtonEvent = {
 		event_name: 'support_button_clicked',
+		__identify: {
+			profileId: data.did
+		},
 		event_props: {
 			button_name: 'support',
 			button_title: 'Support',
@@ -54,6 +61,9 @@
 
 	const checkBoxClicked: ButtonEvent = {
 		event_name: 'checkbox_button_clicked',
+		__identify: {
+			profileId: data.did
+		},
 		event_props: {
 			button_name: 'checkbox',
 			button_title: 'Checkbox',
@@ -130,8 +140,7 @@
 				<Button
 					class="bg-red-400"
 					href="https://ko-fi.com/montepy"
-					onclick={() =>
-						op.track(supportButtonClicked.event_name, supportButtonClicked.event_props)}
+					onclick={() => op.track('support-button', supportButtonClicked)}
 					>Support feature development</Button
 				>
 			</div>
