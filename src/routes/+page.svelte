@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { openPanel as op } from '$lib/lib-utils';
+	import posthog from 'posthog-js';
 </script>
 
 <div class="flex h-[90vh] flex-col items-center justify-center space-y-6">
@@ -23,7 +23,7 @@
 			<Button
 				id="get-started-button"
 				type="submit"
-				onclick={() => op.track('button_clicked', { button_name: 'get-started-button' })}
+				onclick={() => posthog.capture('button_clicked', { button_name: 'get-started-button' })}
 				>Get Started</Button
 			>
 		</form>

@@ -11,9 +11,9 @@
 	import { toast } from 'svelte-sonner';
 	import { Toaster } from '$lib/components/ui/sonner';
 	import { Button } from '$lib/components/ui/button';
-	import { openPanel as op } from '$lib/lib-utils';
 	import type { ButtonEvent } from '$lib/types/events';
 	import { page } from '$app/stores';
+	import posthog from 'posthog-js';
 
 	export let data: PageData & {
 		userId: string;
@@ -96,7 +96,8 @@
 				<LoadingButton
 					buttonTitle="Post"
 					submitting={$submitting}
-					onclick={() => op.track(postButtonClicked.event_name, postButtonClicked.event_props)}
+					onclick={() =>
+						posthog.capture(postButtonClicked.event_name, postButtonClicked.event_props)}
 				/>
 				<Form.Field {form} name="shoutout">
 					<Form.Control>
@@ -106,7 +107,8 @@
 									id="shoutout"
 									name="shoutout"
 									bind:checked={$formData.shoutout}
-									onclick={() => op.track(checkBoxClicked.event_name, checkBoxClicked.event_props)}
+									onclick={() =>
+										posthog.capture(checkBoxClicked.event_name, checkBoxClicked.event_props)}
 								/>
 								<Form.Label class="text-sm font-light italic"
 									>Add "created by Longpost" to the end of your post</Form.Label
@@ -141,7 +143,7 @@
 					class="bg-red-400"
 					href="https://ko-fi.com/montepy"
 					onclick={() =>
-						op.track(supportButtonClicked.event_name, supportButtonClicked.event_props)}
+						posthog.capture(supportButtonClicked.event_name, supportButtonClicked.event_props)}
 					>Support feature development</Button
 				>
 			</div>

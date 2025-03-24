@@ -58,7 +58,6 @@
 	"dependencies": {
 		"@atproto/api": "^0.13.18",
 		"@node-rs/argon2": "^1.1.0",
-		"@openpanel/web": "^1.0.1",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
 		"@tailwindcss/container-queries": "^0.1.1",
@@ -67,6 +66,7 @@
 		"drizzle-orm": "^0.33.0",
 		"lucide-svelte": "^0.468.0",
 		"postgres": "^3.4.5",
+		"posthog-js": "^1.232.4",
 		"puppeteer": "^23.10.1",
 		"puppeteer-core": "^23.10.1",
 		"stripe": "^17.4.0"
