@@ -18,16 +18,21 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - name: Checkout 🛎️
+      - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node.js ⚙️ - Cache dependencies ⚡ - Install dependencies 🔧
-        uses: ./.github/workflows/setup-node
+      - uses: oven-sh/setup-bun@v2
+        name: Setup Bun
         with:
-          node-env: development
-      - name: Run unit tests
-        run: npm run test:unit -- --coverage.enabled=true
-      - name: Run playwrite tests
-        run: npm run test:e2e
+          bun-version: latest
+      - name: Install dependencies
+        run: bun install
+      - name: Run tests
+        run: bun test
+      - name: Run formatting and linting
+        run: bun run lint
+      - name: Report converage
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
       - name: Report converage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
